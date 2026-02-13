@@ -422,3 +422,176 @@ html {
     transform: translate3d(0, -6px, 0);
   }
 }
+.mail-app-colors {
+  background: transparent;
+}
+
+.mail-app-overlay {
+  background: radial-gradient(
+    130% 90% at 50% 8%,
+    rgb(255 255 255 / 0.16),
+    rgb(255 255 255 / 0.08) 42%,
+    rgb(255 255 255 / 0.22) 100%
+  );
+}
+
+.dark .mail-app-overlay {
+  background: radial-gradient(
+    130% 90% at 50% 8%,
+    rgb(255 255 255 / 0.08),
+    rgb(0 0 0 / 0.56) 45%,
+    rgb(0 0 0 / 0.76) 100%
+  );
+}
+
+.mail-app-noise {
+  background-image: radial-gradient(rgb(255 255 255 / 0.14) 0.7px, transparent 0.7px);
+  background-size: 3px 3px;
+  opacity: 0.08;
+}
+
+.mail-glass-card {
+  border: 1px solid rgb(255 255 255 / 0.45);
+  background: rgb(255 255 255 / 0.28);
+  -webkit-backdrop-filter: blur(26px) saturate(145%);
+  backdrop-filter: blur(26px) saturate(145%);
+  box-shadow:
+    0 18px 48px rgb(0 0 0 / 0.14),
+    inset 0 1px 0 rgb(255 255 255 / 0.75),
+    inset 0 0 0 1px rgb(255 255 255 / 0.24);
+  transition:
+    transform 260ms ease,
+    box-shadow 260ms ease,
+    border-color 260ms ease,
+    background-color 260ms ease;
+}
+
+.mail-glass-card:hover {
+  box-shadow:
+    0 22px 56px rgb(0 0 0 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.82),
+    inset 0 0 0 1px rgb(255 255 255 / 0.28);
+}
+
+.dark .mail-glass-card {
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: rgb(255 255 255 / 0.08);
+  box-shadow:
+    0 28px 76px rgb(0 0 0 / 0.5),
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+
+.mail-glass-inner {
+  background: rgb(255 255 255 / 0.24);
+  border: 1px solid rgb(255 255 255 / 0.34);
+  -webkit-backdrop-filter: blur(14px) saturate(132%);
+  backdrop-filter: blur(14px) saturate(132%);
+}
+
+.dark .mail-glass-inner {
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid rgb(255 255 255 / 0.14);
+}
+
+.mail-compose-button {
+  border: 1px solid rgb(255 255 255 / 0.6);
+  background: linear-gradient(110deg, rgb(255 255 255 / 0.82), rgb(232 240 255 / 0.64));
+  color: rgb(24 24 27);
+  box-shadow:
+    0 0 24px rgb(98 123 188 / 0.28),
+    inset 0 1px 0 rgb(255 255 255 / 0.9);
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    background-color 240ms ease;
+}
+
+.mail-compose-button:hover {
+  box-shadow:
+    0 0 32px rgb(94 146 236 / 0.32),
+    inset 0 1px 0 rgb(255 255 255 / 0.98);
+}
+
+.dark .mail-compose-button {
+  border: 1px solid rgb(255 255 255 / 0.22);
+  background: linear-gradient(110deg, rgb(255 255 255 / 0.18), rgb(124 140 180 / 0.2));
+  color: rgb(244 244 245);
+  box-shadow:
+    0 0 28px rgb(98 140 236 / 0.22),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+
+.mail-chip-button {
+  border: 1px solid rgb(255 255 255 / 0.4);
+  background: rgb(255 255 255 / 0.62);
+  color: rgb(39 39 42);
+}
+
+.mail-chip-button:hover {
+  background: rgb(255 255 255 / 0.86);
+}
+
+.dark .mail-chip-button {
+  border: 1px solid rgb(255 255 255 / 0.2);
+  background: rgb(255 255 255 / 0.12);
+  color: rgb(228 228 231);
+}
+
+.dark .mail-chip-button:hover {
+  background: rgb(255 255 255 / 0.18);
+}
+
+.mail-send-button {
+  border: 1px solid rgb(255 255 255 / 0.5);
+  background: linear-gradient(115deg, rgb(255 255 255 / 0.82), rgb(216 232 255 / 0.72));
+  color: rgb(24 24 27);
+}
+
+.mail-send-button:hover {
+  background: linear-gradient(115deg, rgb(255 255 255 / 0.92), rgb(194 219 255 / 0.86));
+}
+
+.dark .mail-send-button {
+  border: 1px solid rgb(255 255 255 / 0.22);
+  background: linear-gradient(115deg, rgb(255 255 255 / 0.18), rgb(101 124 166 / 0.32));
+  color: rgb(244 244 245);
+}
+
+.dark .mail-send-button:hover {
+  background: linear-gradient(115deg, rgb(255 255 255 / 0.25), rgb(128 156 207 / 0.42));
+}
+
+.mail-divider {
+  height: 1px;
+  width: 100%;
+  background: rgb(255 255 255 / 0.45);
+}
+
+.dark .mail-divider {
+  background: rgb(255 255 255 / 0.14);
+}
+
+.mail-sidebar-separator {
+  border-right: 1px solid rgb(255 255 255 / 0.38);
+}
+
+.dark .mail-sidebar-separator {
+  border-right: 1px solid rgb(255 255 255 / 0.14);
+}
+
+.mail-content-divider {
+  border-left: 1px solid rgb(255 255 255 / 0.34);
+}
+
+.dark .mail-content-divider {
+  border-left: 1px solid rgb(255 255 255 / 0.13);
+}
+
+.mail-ai-panel-separator {
+  border-left: 1px solid rgb(255 255 255 / 0.38);
+}
+
+.dark .mail-ai-panel-separator {
+  border-left: 1px solid rgb(255 255 255 / 0.14);
+}

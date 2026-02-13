@@ -1,0 +1,62 @@
+import { ChatMessage, MailItem } from "@/components/custom/mail/types";
+
+export const mailItems: MailItem[] = [
+  {
+    id: "m-1",
+    sender: "Avery Brooks",
+    subject: "Design pass for onboarding revamp",
+    snippet: "Shared final Figma notes. Need approval before Monday release.",
+    dateLabel: "10:24 AM",
+    unread: true,
+    category: "Important",
+    body: "Hi team,\n\nI finished the onboarding design pass and uploaded the final interaction notes in Figma. The remaining blocker is legal approval on the new copy.\n\nCan we confirm by end of day so we stay on track for the Monday rollout?\n\nThanks,\nAvery",
+  },
+  {
+    id: "m-2",
+    sender: "Ops Alerts",
+    subject: "Delivery latency spiked in US-East",
+    snippet: "P95 latency crossed threshold for 18 minutes. Auto-recovered.",
+    dateLabel: "Yesterday",
+    unread: true,
+    category: "Team",
+    body: "Heads up: email delivery P95 latency crossed the configured threshold for 18 minutes in US-East.\n\nAuto-remediation recovered queue pressure, but we should review the burst source in tomorrow's standup.",
+  },
+  {
+    id: "m-3",
+    sender: "Nora Singh",
+    subject: "Q1 planning notes",
+    snippet: "Drafted roadmap ideas for the AI inbox assistant initiative.",
+    dateLabel: "Tue",
+    unread: false,
+    category: "Team",
+    body: "Hi,\n\nI drafted the Q1 planning notes for the AI inbox assistant initiative. Main focus areas are triage speed, reply quality, and analytics baseline.\n\nPlease add comments before Friday.",
+  },
+  {
+    id: "m-4",
+    sender: "Travel Desk",
+    subject: "Your trip confirmation",
+    snippet: "Itinerary and boarding details are attached to this message.",
+    dateLabel: "Mon",
+    unread: false,
+    category: "Personal",
+    body: "Your trip is confirmed.\n\nDepart: March 2, 2026\nReturn: March 6, 2026\n\nPlease review all traveler details and reply if any corrections are needed.",
+  },
+];
+
+export const chatMessages: ChatMessage[] = [
+  {
+    id: "c-1",
+    role: "assistant",
+    text: "I can draft a concise reply for the selected email.",
+  },
+  {
+    id: "c-2",
+    role: "user",
+    text: "Summarize the action items from this thread.",
+  },
+  {
+    id: "c-3",
+    role: "assistant",
+    text: "Action items: 1) confirm legal copy today, 2) approve onboarding release by EOD.",
+  },
+];

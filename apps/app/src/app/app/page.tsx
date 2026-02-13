@@ -1,6 +1,7 @@
 "use client";
 
-import { ThemeToggle } from "@/components/theme-toggle";
+import LiquidWave from "@/components/backgrounds/new-liquid";
+import { MailWorkspace } from "@/components/custom/mail/workspace";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -19,25 +20,21 @@ export default function AppHomePage() {
     return <main className="h-full w-full" />;
   }
 
+  const fullName = `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || "AI Mail User";
+
   return (
-    <main className="mx-auto flex h-full w-full max-w-5xl flex-col px-6 py-8">
-      <div className="mb-6 flex items-center justify-end">
-        <ThemeToggle />
-      </div>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Mail App</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Signed in as {user?.first_name} {user?.last_name}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => void logout().then(() => router.replace("/"))}
-          className="rounded-full border border-zinc-300 px-4 py-2 text-sm"
-        >
-          Logout
-        </button>
+    <main className="relative h-full w-full overflow-hidden">
+      <LiquidWave
+        className="absolute inset-0 z-0"
+        style={{ zIndex: 0 }}
+        color1="#ffffff"
+        color2="#d4d4d4"
+        color3="#a3a3a3"
+        autoDemo={true}
+        />
+
+      <div className="absolute inset-0 z-20">
+        <MailWorkspace fullName={fullName} onLogout={() => void logout().then(() => router.replace("/"))} />
       </div>
     </main>
   );

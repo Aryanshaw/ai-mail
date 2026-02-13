@@ -8,3 +8,4 @@
 - on frontend always use axios or our own axios interceptor and in backend use aiohttp
 - Wrap api calls and server handlers in try catch and in the catch block add a print line
 - When printing errors always also add the name of the function which throws error
+- Do not hardcode values in tailwind css like this "text-[11px]" always use tailwind classes like "text-sm" , "h-full"
