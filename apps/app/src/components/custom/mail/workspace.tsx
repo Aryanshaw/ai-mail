@@ -5,25 +5,67 @@ import { LeftSidebar } from "@/components/custom/mail/left-sidebar";
 import { MainPanel } from "@/components/custom/mail/main-panel";
 import { chatMessages, mailItems } from "@/components/custom/mail/mock-data";
 import { NavItemKey } from "@/components/custom/mail/types";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 interface MailWorkspaceProps {
   fullName: string;
   onLogout: () => void;
 }
 
+const AI_PANEL_MIN_WIDTH = 280;
+const AI_PANEL_MAX_WIDTH = 520;
+const AI_PANEL_DEFAULT_WIDTH = 320;
+
 export function MailWorkspace({ fullName, onLogout }: MailWorkspaceProps) {
   const [activeNav, setActiveNav] = useState<NavItemKey>("inbox");
   const [selectedMailId, setSelectedMailId] = useState(mailItems[0]?.id ?? "");
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [assistantWidth, setAssistantWidth] = useState(AI_PANEL_DEFAULT_WIDTH);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const selectedMail = useMemo(
     () => mailItems.find((mail) => mail.id === selectedMailId) ?? mailItems[0],
     [selectedMailId]
   );
 
+  const handleAssistantResizeStart = (event: ReactPointerEvent<HTMLDivElement>) => {
+    event.preventDefault();
+
+    const startX = event.clientX;
+    const startWidth = assistantWidth;
+    const contentWidth = contentRef.current?.getBoundingClientRect().width ?? 1200;
+    const maxWidth = Math.min(AI_PANEL_MAX_WIDTH, Math.floor(contentWidth * 0.55));
+
+    const nextCursor = document.body.style.cursor;
+    const nextUserSelect = document.body.style.userSelect;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+
+    const onPointerMove = (moveEvent: globalThis.PointerEvent) => {
+      const deltaX = moveEvent.clientX - startX;
+      const proposedWidth = startWidth - deltaX;
+      const clampedWidth = Math.max(AI_PANEL_MIN_WIDTH, Math.min(maxWidth, proposedWidth));
+      setAssistantWidth(clampedWidth);
+    };
+
+    const onPointerUp = () => {
+      document.body.style.cursor = nextCursor;
+      document.body.style.userSelect = nextUserSelect;
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+    };
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+  };
+
   if (!selectedMail) {
     return null;
+  }
+
+  function toggleChatPanel(){
+    setIsAssistantOpen((prev) => !prev)
   }
 
   return (
@@ -41,7 +83,7 @@ export function MailWorkspace({ fullName, onLogout }: MailWorkspaceProps) {
             onLogout={onLogout}
           />
 
-          <div className="flex h-full min-h-0 min-w-0 flex-1 gap-1">
+          <div ref={contentRef} className="flex h-full min-h-0 min-w-0 flex-1 gap-1">
             <MainPanel
               mails={mailItems}
               selectedMail={selectedMail}
@@ -52,7 +94,9 @@ export function MailWorkspace({ fullName, onLogout }: MailWorkspaceProps) {
             <AIPanel
               messages={chatMessages}
               isOpen={isAssistantOpen}
-              onToggle={() => setIsAssistantOpen((prev) => !prev)}
+              width={assistantWidth}
+              onResizeStart={handleAssistantResizeStart}
+              onToggle={toggleChatPanel}
             />
           </div>
         </div>

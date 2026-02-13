@@ -1,39 +1,58 @@
 import { ChatMessage } from "@/components/custom/mail/types";
 import { Button } from "@/components/ui/button";
-import { Bot, ChevronLeft, ChevronRight, SendHorizontal, Sparkles } from "lucide-react";
+import { Bot, ChevronLeft, ChevronRight, GripVertical, SendHorizontal, Sparkles } from "lucide-react";
+import type { PointerEvent } from "react";
 
 interface AIPanelProps {
   messages: ChatMessage[];
   isOpen: boolean;
+  width: number;
   onToggle: () => void;
+  onResizeStart: (event: PointerEvent<HTMLDivElement>) => void;
 }
 
-export function AIPanel({ messages, isOpen, onToggle }: AIPanelProps) {
+export function AIPanel({ messages, isOpen, width, onToggle, onResizeStart }: AIPanelProps) {
   return (
     <aside
-      className={`mail-ai-panel-separator mail-glass-card relative h-full min-h-0 overflow-hidden transition-all duration-300 ease-out ${
-        isOpen ? "w-full lg:w-[320px]" : "w-11"
+      className={`group/ai mail-ai-panel-separator mail-glass-card relative h-full min-h-0 overflow-hidden transition-[width] duration-300 ease-out ${
+        isOpen ? "w-full" : "w-14"
       }`}
+      style={isOpen ? { width: `${width}px` } : undefined}
     >
-      {/* Collapsed assistant rail handle anchored to panel edge. */}
+      {/* Desktop resize rail for drag-resizing the assistant panel. */}
+      {isOpen ? (
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize AI panel"
+          onPointerDown={onResizeStart}
+          className="absolute inset-y-0 left-0 z-30 hidden w-2 cursor-col-resize items-center justify-center transition-colors hover:bg-black/4 dark:hover:bg-white/8 lg:flex"
+        >
+          <div className="h-28 w-px rounded-full bg-black/22 opacity-0 transition-opacity duration-200 group-hover/ai:opacity-100 dark:bg-white/22" />
+          <GripVertical className="absolute size-3.5 text-zinc-500 opacity-0 transition-opacity duration-200 group-hover/ai:opacity-100 dark:text-zinc-400" />
+        </div>
+      ) : null}
+
       {!isOpen ? (
-        <div className="flex h-full items-start justify-center pt-2">
-          <button
-            type="button"
-            onClick={onToggle}
-            className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-white/40 bg-white/68 px-2.5 py-1.5 text-[11px] font-medium text-zinc-700 transition-all hover:bg-white dark:border-white/20 dark:bg-white/12 dark:text-zinc-200 dark:hover:bg-white/18"
-            aria-label="Open AI assistant"
-          >
-            <Sparkles className="size-3.5" />
-            <ChevronLeft className="size-3.5" />
-          </button>
+        <div className="flex h-full p-1.5">
+          <div className="mail-ai-collapsed-shell flex w-full flex-col items-center gap-2 rounded-md">
+            <button
+              type="button"
+              onClick={onToggle}
+              className="mail-ai-collapsed-trigger inline-flex cursor-pointer items-center justify-center rounded-md border border-black/10 dark:border-white/8 p-2"
+              aria-label="Open AI assistant"
+            >
+              <Sparkles className="size-4" />
+              <ChevronLeft className="size-3 text-zinc-500 dark:text-zinc-400" />
+            </button>
+          </div>
         </div>
       ) : (
         <div className="flex h-full flex-col p-2">
-          <div className="mb-3 rounded-md border border-white/30 bg-white/35 p-3 dark:border-white/12 dark:bg-white/6">
+          <div className="mb-2 rounded-md border border-white/30 bg-white/35 p-3 dark:border-white/12 dark:bg-white/6">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <div className="rounded-lg border border-white/40 bg-white/60 p-1.5 dark:border-white/15 dark:bg-white/10">
+                <div className="rounded-md border border-white/40 bg-white/60 p-1.5 dark:border-white/15 dark:bg-white/10">
                   <Bot className="size-4 text-zinc-800 dark:text-zinc-100" />
                 </div>
                 <div>
@@ -71,7 +90,7 @@ export function AIPanel({ messages, isOpen, onToggle }: AIPanelProps) {
               );
             })}
           </div>
-          
+
           {/* Bottom chat bar */}
           <div className="rounded-md border border-white/30 bg-white/35 p-3 dark:border-white/12 dark:bg-white/6">
             <p className="mb-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">Ask AI for summary or quick draft</p>

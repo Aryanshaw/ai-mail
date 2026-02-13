@@ -602,3 +602,44 @@ html {
 .dark .mail-panel-border {
   border-color: rgb(255 255 255 / 0.13);
 }
+
+.mail-ai-collapsed-shell {
+  border: 1px solid rgb(24 24 27 / 0.14);
+  background: rgb(255 255 255 / 0.34);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  backdrop-filter: blur(12px) saturate(130%);
+}
+
+.dark .mail-ai-collapsed-shell {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.mail-ai-collapsed-trigger {
+  height: 2rem;
+  width: 2rem;
+  border: 1px solid rgb(24 24 27 / 0.16);
+  background: rgb(255 255 255 / 0.72);
+  color: rgb(39 39 42);
+  transition:
+    background-color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.mail-ai-collapsed-trigger:hover {
+  transform: translateY(-1px);
+  background: rgb(255 255 255 / 0.92);
+  box-shadow: 0 6px 20px rgb(24 24 27 / 0.14);
+}
+
+.dark .mail-ai-collapsed-trigger {
+  border: 1px solid rgb(255 255 255 / 0.2);
+  background: rgb(255 255 255 / 0.14);
+  color: rgb(228 228 231);
+}
+
+.dark .mail-ai-collapsed-trigger:hover {
+  background: rgb(255 255 255 / 0.22);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 0.38);
+}

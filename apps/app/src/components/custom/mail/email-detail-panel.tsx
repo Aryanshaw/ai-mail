@@ -8,7 +8,7 @@ interface EmailDetailPanelProps {
 
 export function EmailDetailPanel({ selectedMail }: EmailDetailPanelProps) {
   return (
-    <div className="mail-content-divider flex min-h-0 flex-col">
+    <div className="mail-content-divider flex h-full min-h-0 flex-col">
       {/* Header carries message context before body content. */}
       <div className="mail-panel-border border-b px-4 py-4">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-500 dark:text-zinc-400">Email Detail</p>

@@ -66,7 +66,7 @@ export function LeftSidebar({ activeNav, onNavChange, userLabel, onLogout }: Lef
 
       {/* Footer utilities stay pinned to the bottom of the sidebar. */}
       <div className="mt-auto space-y-2">
-        <div className="rounded-md border border-white/30 bg-white/35 p-2 px-4 dark:border-white/10 dark:bg-white/6 flex items-center justify-between w-full">
+        <div className="rounded-md border border-black/10 dark:border-white/30 bg-white/35 p-2 px-4 dark:border-white/10 dark:bg-white/6 flex items-center justify-between w-full">
           <ThemeToggle /> 
           <p className="dark:text-gray-300 text-gray-800 text-sm">  
             Theme toggle
@@ -76,7 +76,7 @@ export function LeftSidebar({ activeNav, onNavChange, userLabel, onLogout }: Lef
           type="button"
           size="sm"
           onClick={onLogout}
-          className="w-full cursor-pointer p-4 rounded-md border border-white/45 bg-white/62 text-zinc-800 hover:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
+          className="w-full cursor-pointer p-4 rounded-md border border-black-10 dark:border-white/45 bg-white/62 text-zinc-800 hover:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
         >
           <LogOut className="size-4" />
           Logout
