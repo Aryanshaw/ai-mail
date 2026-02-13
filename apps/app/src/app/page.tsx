@@ -5,11 +5,18 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Login from "@/components/custom/login";
 
 export default function HomePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { loading, isAuthenticated } = useAuth();
+  const rawAuthError = searchParams.get("error");
+  const authError =
+    rawAuthError && !["Missing session token", "Unauthorized"].includes(rawAuthError)
+      ? rawAuthError
+      : null;
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
@@ -40,7 +47,7 @@ export default function HomePage() {
       </div>
 
       <div className="absolute inset-0 m-auto z-20 flex items-center justify-center h-fit w-fit">
-        <Login />
+        <Login error={authError} />
       </div>
     </div>
   );

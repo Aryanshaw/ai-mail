@@ -6,7 +6,11 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import Noise from "../backgrounds/noise";
 
-export default function Login() {
+type LoginProps = {
+  error?: string | null;
+};
+
+export default function Login({ error }: LoginProps) {
   const { loginWithGoogle } = useAuth();
 
   return (
@@ -46,6 +50,7 @@ export default function Login() {
         <p className="mt-7 text-center text-xs tracking-wide auth-disclaimer-colors">
           Gmail read access is requested only for AI-assisted inbox actions.
         </p>
+        {error ? <p className="mt-3 text-center text-xs text-red-500">{error}</p> : null}
       </div>
     </div>
   );
