@@ -1,6 +1,6 @@
 import { MailItem } from "@/types/types";
 import { Button } from "@/components/ui/button";
-import { Forward, Reply, Star } from "lucide-react";
+import { Forward, Mail, Reply, Star } from "lucide-react";
 
 interface EmailDetailPanelProps {
   selectedMail: MailItem | null;
@@ -9,7 +9,8 @@ interface EmailDetailPanelProps {
 export function EmailDetailPanel({ selectedMail }: EmailDetailPanelProps) {
   if (!selectedMail) {
     return (
-      <div className="mail-content-divider flex h-full min-h-0 items-center justify-center">
+      <div className="mail-content-divider flex h-full min-h-0 items-center justify-center gap-2">
+        <Mail size={20} color={"gray"} />
         <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">No messages</p>
       </div>
     );
