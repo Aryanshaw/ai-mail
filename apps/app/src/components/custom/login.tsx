@@ -11,7 +11,7 @@ export default function Login() {
 
   return (
     <div className="relative z-20 flex h-full items-center justify-center px-4 py-10">
-      <div className="auth-card-enter auth-card-float w-full max-w-[460px] rounded-[24px] p-8 backdrop-blur-2xl sm:p-10 auth-card-colors">
+      <div className="auth-card-enter auth-card-float w-full max-w-[460px] rounded-xl p-8 backdrop-blur-2xl sm:p-10 auth-card-colors">
         <Noise />
 
         {/* Top ai indicator component */}
@@ -39,7 +39,7 @@ export default function Login() {
           type="button"
           className="group mt-9 flex h-12 w-full items-center justify-center gap-3 rounded-xl border text-base font-medium transition-all duration-300 hover:-translate-y-0.5 auth-google-btn-colors cursor-pointer focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
         >
-          <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
+          <Image src="/icons/google.svg" alt="Google" width={20} height={20} loading="eager" />
           <span>Connect with Google</span>
         </Button>
 
