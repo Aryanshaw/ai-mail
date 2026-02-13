@@ -455,6 +455,7 @@ html {
   background: rgb(255 255 255 / 0.28);
   -webkit-backdrop-filter: blur(26px) saturate(145%);
   backdrop-filter: blur(26px) saturate(145%);
+  border-radius: 0.5rem;
   box-shadow:
     0 18px 48px rgb(0 0 0 / 0.14),
     inset 0 1px 0 rgb(255 255 255 / 0.75),
@@ -563,35 +564,41 @@ html {
 }
 
 .mail-divider {
-  height: 1px;
-  width: 100%;
-  background: rgb(255 255 255 / 0.45);
+  background: rgb(24 24 27 / 0.14);
+}
+
+.mail-sidebar-separator {
+  border-right: 1px solid rgb(24 24 27 / 0.14);
+}
+
+.mail-content-divider {
+  border-left: 1px solid rgb(24 24 27 / 0.12);
+}
+
+.mail-ai-panel-separator {
+  border-left: 1px solid rgb(24 24 27 / 0.14);
+}
+
+.mail-panel-border {
+  border-color: rgb(24 24 27 / 0.14);
 }
 
 .dark .mail-divider {
   background: rgb(255 255 255 / 0.14);
 }
 
-.mail-sidebar-separator {
-  border-right: 1px solid rgb(255 255 255 / 0.38);
-}
-
 .dark .mail-sidebar-separator {
   border-right: 1px solid rgb(255 255 255 / 0.14);
-}
-
-.mail-content-divider {
-  border-left: 1px solid rgb(255 255 255 / 0.34);
 }
 
 .dark .mail-content-divider {
   border-left: 1px solid rgb(255 255 255 / 0.13);
 }
 
-.mail-ai-panel-separator {
-  border-left: 1px solid rgb(255 255 255 / 0.38);
-}
-
 .dark .mail-ai-panel-separator {
   border-left: 1px solid rgb(255 255 255 / 0.14);
+}
+
+.dark .mail-panel-border {
+  border-color: rgb(255 255 255 / 0.13);
 }

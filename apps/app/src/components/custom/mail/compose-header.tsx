@@ -12,7 +12,7 @@ const ComposeHeader = ({
 
 ) => {
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-white/30 bg-white/35 p-3 dark:border-white/12 dark:bg-white/5">
+    <div className="mb-2 flex flex-wrap items-center gap-2 rounded-md border border-black/8 bg-white/35 p-3 dark:border-white/12 dark:bg-white/5">
     <Button
       type="button"
       size="sm"
@@ -26,7 +26,7 @@ const ComposeHeader = ({
       <input
         type="text"
         placeholder="Search mail"
-        className="h-9 w-full rounded-lg border border-white/40 bg-white/72 pl-9 pr-3 text-sm text-zinc-900 outline-none transition-all placeholder:text-zinc-500 focus:border-white focus:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:border-white/30 dark:focus:bg-white/15"
+        className="h-9 w-full rounded-lg border mail-panel-border bg-white/72 pl-9 pr-3 text-sm text-zinc-900 outline-none transition-all placeholder:text-zinc-500 focus:border-white focus:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:border-white/30 dark:focus:bg-white/15"
       />
     </div>
 

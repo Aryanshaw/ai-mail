@@ -68,7 +68,7 @@ export function LeftSidebar({ activeNav, onNavChange, userLabel, onLogout }: Lef
       <div className="mt-auto space-y-2">
         <div className="rounded-md border border-white/30 bg-white/35 p-2 px-4 dark:border-white/10 dark:bg-white/6 flex items-center justify-between w-full">
           <ThemeToggle /> 
-          <p className="dark:text-gray-300 text-gray-800">  
+          <p className="dark:text-gray-300 text-gray-800 text-sm">  
             Theme toggle
           </p>
         </div>

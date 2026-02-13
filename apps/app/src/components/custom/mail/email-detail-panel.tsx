@@ -10,7 +10,7 @@ export function EmailDetailPanel({ selectedMail }: EmailDetailPanelProps) {
   return (
     <div className="mail-content-divider flex min-h-0 flex-col">
       {/* Header carries message context before body content. */}
-      <div className="border-b border-white/25 px-4 py-4 dark:border-white/10">
+      <div className="mail-panel-border border-b px-4 py-4">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-500 dark:text-zinc-400">Email Detail</p>
         <h2 className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">{selectedMail.subject}</h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">From {selectedMail.sender}</p>
@@ -22,7 +22,7 @@ export function EmailDetailPanel({ selectedMail }: EmailDetailPanelProps) {
       </div>
 
       {/* Quick actions for the selected message thread. */}
-      <div className="flex flex-wrap gap-2 border-t border-white/25 px-4 py-3 dark:border-white/10">
+      <div className="mail-panel-border flex flex-wrap gap-2 border-t px-4 py-3">
         <Button
           type="button"
           size="sm"
