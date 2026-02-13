@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 import app as project_root
+from app.auth.routes import router as auth_router
 from app.config.db import close_db, init_db
 from app.routes import health_router
 
@@ -22,6 +23,7 @@ app = FastAPI(lifespan=lifespan)
 
 def init_routes(app_instance: FastAPI) -> None:
     app_instance.include_router(health_router)
+    app_instance.include_router(auth_router)
 
 
 if __name__ == "__main__":

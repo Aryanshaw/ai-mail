@@ -19,3 +19,6 @@ class User(Base, TimestampMixin):
     refresh_tokens = relationship(
         "RefreshToken", back_populates="user", cascade="all, delete-orphan"
     )
+    oauth_accounts = relationship(
+        "OauthAccount", back_populates="user", cascade="all, delete-orphan"
+    )
