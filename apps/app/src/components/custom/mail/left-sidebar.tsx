@@ -42,7 +42,7 @@ export function LeftSidebar({ activeNav, onNavChange, userLabel, onLogout }: Lef
               key={item.key}
               type="button"
               onClick={() => onNavChange(item.key)}
-              className={`group flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-2.5 text-left transition-all duration-300 ${
+              className={`group flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-2.5 text-left transition-all duration-300 ${
                 isActive
                   ? "border-white/50 bg-white/60 text-zinc-900 shadow-sm dark:border-white/25 dark:bg-white/12 dark:text-zinc-100"
                   : "border-transparent text-zinc-700 hover:border-white/35 hover:bg-white/42 dark:text-zinc-300 dark:hover:border-white/15 dark:hover:bg-white/8"

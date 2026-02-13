@@ -68,7 +68,7 @@ export function AIPanel({ messages, isOpen, onToggle }: AIPanelProps) {
               return (
                 <div
                   key={message.id}
-                  className={`max-w-[92%] rounded-xl border px-3 py-2 text-sm leading-6 transition-all ${
+                  className={`max-w-[92%] rounded-md border px-3 py-2 text-sm leading-6 transition-all ${
                     isAssistant
                       ? "self-start border-white/35 bg-white/55 text-zinc-700 dark:border-white/16 dark:bg-white/10 dark:text-zinc-200"
                       : "self-end border-white/48 bg-white/75 text-zinc-900 dark:border-white/20 dark:bg-white/15 dark:text-zinc-100"

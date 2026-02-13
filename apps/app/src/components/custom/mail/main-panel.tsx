@@ -26,7 +26,7 @@ export function MainPanel({
       <ComposeHeader onToggleAssistant={onToggleAssistant} isAssistantOpen={isAssistantOpen}/>
 
       {/* Unified inbox area with explicit list-detail divider. */}
-      <div className="mail-glass-inner grid min-h-0 flex-1 overflow-hidden rounded-xl lg:grid-cols-[0.52fr_1.08fr]">
+      <div className="mail-glass-inner grid min-h-0 flex-1 overflow-hidden rounded-md lg:grid-cols-[0.52fr_1.08fr]">
         <div className="flex min-h-0 flex-col">
           <div className="border-b border-white/25 px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-600 dark:border-white/10 dark:text-zinc-400">
             Priority Inbox
