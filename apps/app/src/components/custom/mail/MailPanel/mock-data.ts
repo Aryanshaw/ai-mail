@@ -1,4 +1,4 @@
-import { ChatMessage, MailItem } from "@/components/custom/mail/types";
+import { ChatMessage, MailItem } from "@/types/types";
 
 export const mailItems: MailItem[] = [
   {

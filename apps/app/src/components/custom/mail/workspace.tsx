@@ -1,10 +1,10 @@
 "use client";
 
-import { AIPanel } from "@/components/custom/mail/ai-panel";
+import { AIPanel } from "@/components/custom/mail/AiChat/ai-panel";
 import { LeftSidebar } from "@/components/custom/mail/left-sidebar";
-import { MainPanel } from "@/components/custom/mail/main-panel";
-import { chatMessages, mailItems } from "@/components/custom/mail/mock-data";
-import { NavItemKey } from "@/components/custom/mail/types";
+import { MainPanel } from "@/components/custom/mail/MailPanel/main-panel";
+import { chatMessages, mailItems } from "@/components/custom/mail/MailPanel/mock-data";
+import { NavItemKey } from "@/types/types";
 import { useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 

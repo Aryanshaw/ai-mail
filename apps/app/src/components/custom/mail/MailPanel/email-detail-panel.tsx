@@ -1,4 +1,4 @@
-import { MailItem } from "@/components/custom/mail/types";
+import { MailItem } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import { Forward, Reply, Star } from "lucide-react";
 

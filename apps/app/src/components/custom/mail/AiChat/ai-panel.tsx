@@ -1,4 +1,4 @@
-import { ChatMessage } from "@/components/custom/mail/types";
+import { ChatMessage } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import {
   Bot,

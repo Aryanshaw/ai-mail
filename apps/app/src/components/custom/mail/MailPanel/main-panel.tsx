@@ -1,6 +1,6 @@
-import { EmailDetailPanel } from "@/components/custom/mail/email-detail-panel";
-import { EmailListItem } from "@/components/custom/mail/email-list-item";
-import { MailItem } from "@/components/custom/mail/types";
+import { EmailDetailPanel } from "@/components/custom/mail/MailPanel/email-detail-panel";
+import { EmailListItem } from "@/components/custom/mail/MailPanel/email-list-item";
+import { MailItem } from "@/types/types";
 import ComposeHeader from "./compose-header";
 
 interface MainPanelProps {

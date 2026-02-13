@@ -1,4 +1,4 @@
-import { NavItemKey } from "@/components/custom/mail/types";
+import { NavItemKey } from "@/types/types";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Archive, Compass, Inbox, LogOut, PenSquare, SendHorizontal } from "lucide-react";

@@ -1,4 +1,4 @@
-import { MailItem } from "@/components/custom/mail/types";
+import { MailItem } from "@/types/types";
 
 interface EmailListItemProps {
   mail: MailItem;
