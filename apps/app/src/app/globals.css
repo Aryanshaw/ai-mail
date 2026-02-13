@@ -39,7 +39,7 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -122,4 +122,303 @@
 body,
 html {
   height: 100%;
+}
+
+.liquid-wave-layer {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(4px);
+  opacity: 0.9;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgb(255 255 255 / 0.95),
+    rgb(219 223 232 / 0.72) 48%,
+    rgb(173 183 205 / 0.25) 74%,
+    transparent 100%
+  );
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.liquid-wave-layer-1 {
+  width: 72vw;
+  height: 72vw;
+  min-width: 580px;
+  min-height: 580px;
+  top: -22%;
+  left: -8%;
+  animation-name: liquidFloatA;
+  animation-duration: 18s;
+}
+
+.liquid-wave-layer-2 {
+  width: 62vw;
+  height: 62vw;
+  min-width: 500px;
+  min-height: 500px;
+  bottom: -28%;
+  right: -5%;
+  animation-name: liquidFloatB;
+  animation-duration: 22s;
+}
+
+.liquid-wave-layer-3 {
+  width: 34vw;
+  height: 34vw;
+  min-width: 280px;
+  min-height: 280px;
+  top: 42%;
+  left: 58%;
+  animation-name: liquidFloatC;
+  animation-duration: 16s;
+}
+
+@keyframes liquidFloatA {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 4%, 0) scale(1.08);
+  }
+}
+
+@keyframes liquidFloatB {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-5%, -5%, 0) scale(1.12);
+  }
+}
+
+@keyframes liquidFloatC {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-4%, 3%, 0) scale(1.07);
+  }
+}
+
+@keyframes waveFloatA {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, 3%, 0) scale(1.08);
+  }
+}
+
+@keyframes waveFloatB {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-4%, -4%, 0) scale(1.1);
+  }
+}
+
+@keyframes waveFloatC {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-3%, 2%, 0) scale(1.06);
+  }
+}
+
+.auth-page-colors {
+  background: #fff;
+  color: #000;
+}
+
+.dark .auth-page-colors {
+  background: #000;
+  color: #fff;
+}
+
+.auth-overlay-colors {
+  background: radial-gradient(
+    120% 90% at 50% 8%,
+    rgb(255 255 255 / 0.18),
+    rgb(245 245 245 / 0.1) 46%,
+    rgb(255 255 255 / 0.24) 100%
+  );
+}
+
+.dark .auth-overlay-colors {
+  background: radial-gradient(
+    120% 90% at 50% 8%,
+    rgb(255 255 255 / 0.08),
+    rgb(0 0 0 / 0.72) 46%,
+    rgb(0 0 0 / 0.9) 100%
+  );
+}
+
+.auth-noise-colors {
+  background-image: radial-gradient(rgb(255 255 255 / 0.08) 0.6px, transparent 0.6px);
+  background-size: 3px 3px;
+  opacity: 0.12;
+  mix-blend-mode: soft-light;
+}
+
+.auth-card-colors {
+  border: 1px solid rgb(255 255 255 / 0.82);
+  background: rgb(255 255 255 / 0.2);
+  -webkit-backdrop-filter: blur(34px) saturate(145%);
+  backdrop-filter: blur(34px) saturate(145%);
+  box-shadow:
+    0 32px 120px rgb(0 0 0 / 0.16),
+    inset 0 1px 0 rgb(255 255 255 / 0.75),
+    inset 0 0 0 1px rgb(255 255 255 / 0.58);
+}
+
+.dark .auth-card-colors {
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: rgb(255 255 255 / 0.08);
+  box-shadow:
+    0 28px 120px rgb(0 0 0 / 0.58),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+
+.auth-chip-colors {
+  border: 1px solid rgb(255 255 255 / 0.74);
+  background: rgb(255 255 255 / 0.18);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.dark .auth-chip-colors {
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.auth-icon-colors {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 0 24px rgb(0 0 0 / 0.18);
+}
+
+.dark .auth-icon-colors {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 24px rgb(255 255 255 / 0.26);
+}
+
+.auth-title-colors {
+  color: #000;
+}
+
+.dark .auth-title-colors {
+  color: #fff;
+}
+
+.auth-subtitle-colors {
+  color: rgb(0 0 0 / 0.6);
+}
+
+.dark .auth-subtitle-colors {
+  color: rgb(255 255 255 / 0.65);
+}
+
+.auth-heading-colors {
+  color: #000;
+}
+
+.dark .auth-heading-colors {
+  color: #fff;
+}
+
+.auth-subtext-colors {
+  color: rgb(0 0 0 / 0.65);
+}
+
+.dark .auth-subtext-colors {
+  color: rgb(255 255 255 / 0.7);
+}
+
+.auth-google-btn-colors {
+  border-color: rgba(0, 0, 0, 0.119);
+  background: #d8d8d800;
+  color: #000000;
+  box-shadow: 0 18px 50px rgb(0 0 0 / 0.22);
+}
+
+.auth-google-btn-colors:hover {
+  border-color: rgba(0, 0, 0, 0.119);
+  box-shadow: 0 26px 70px rgb(0 0 0 / 0.3);
+}
+
+.auth-google-btn-colors:focus,
+.auth-google-btn-colors:focus-visible {
+  outline: none;
+  box-shadow: 0 18px 50px rgb(0 0 0 / 0.22);
+}
+
+.dark .auth-google-btn-colors {
+  border-color: rgb(255 255 255 / 0.25);
+  background: #ffffff0e;
+  color: #ffffff;
+  box-shadow:
+    0 18px 50px rgb(0 0 0 / 0.45),
+    0 0 35px rgb(255 255 255 / 0.2);
+}
+
+.dark .auth-google-btn-colors:hover {
+  border-color: rgb(255 255 255 / 0.65);
+  box-shadow:
+    0 26px 70px rgb(0 0 0 / 0.58),
+    0 0 55px rgb(255 255 255 / 0.32);
+}
+
+.dark .auth-google-btn-colors:focus,
+.dark .auth-google-btn-colors:focus-visible {
+  outline: none;
+  box-shadow:
+    0 18px 50px rgb(0 0 0 / 0.45),
+    0 0 35px rgb(255 255 255 / 0.2);
+}
+
+.auth-disclaimer-colors {
+  color: rgb(0 0 0 / 0.5);
+}
+
+.dark .auth-disclaimer-colors {
+  color: rgb(255 255 255 / 0.55);
+}
+
+.auth-card-enter {
+  animation: authCardIn 680ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+.auth-card-float {
+  animation: authCardIn 680ms cubic-bezier(0.2, 0.9, 0.2, 1) both,
+    authCardFloat 7.2s ease-in-out 820ms infinite;
+}
+
+@keyframes authCardIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes authCardFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
 }
