@@ -11,9 +11,9 @@ export function EmailListItem({ mail, isSelected, onSelect }: EmailListItemProps
     <button
       type="button"
       onClick={() => onSelect(mail.id)}
-      className={`mb-2 w-full cursor-pointer rounded-md border px-3 py-3 text-left transition-all duration-300 ${
+      className={`mb-2 w-full cursor-pointer border-b border-black/10 dark:border-white/8 px-3 py-3 text-left transition-all duration-300 ${
         isSelected
-          ? "border-white/45 bg-white/62 shadow-sm dark:border-white/20 dark:bg-white/12"
+          ? "border-white/45 bg-white/62 shadow-sm dark:border-white/20 dark:bg-white/12 rounded-md"
           : "border-transparent hover:border-white/30 hover:bg-white/42 dark:hover:border-white/14 dark:hover:bg-white/8"
       }`}
     >

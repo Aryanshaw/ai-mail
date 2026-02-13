@@ -31,7 +31,7 @@ export function LeftSidebar({ activeNav, onNavChange, user, onLogout }: LeftSide
   return (
     <aside className="mail-glass-card mail-sidebar-separator flex h-full min-h-0 flex-col p-2 lg:w-[220px]">
       {/* App identity for instant orientation. */}
-      <div className="mb-4 rounded-2xl border border-white/30 bg-white/35 p-4 dark:border-white/10 dark:bg-white/6">
+      <div className="mb-4 rounded-md border border-white/30 bg-white/35 p-4 dark:border-white/10 dark:bg-white/6">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400">
           AI Mail
         </p>
