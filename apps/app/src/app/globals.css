@@ -644,3 +644,89 @@ html {
   background: rgb(255 255 255 / 0.22);
   box-shadow: 0 10px 28px rgb(0 0 0 / 0.38);
 }
+
+.mail-compose-field {
+  border-color: rgb(24 24 27 / 0.16);
+  background: rgb(255 255 255 / 0.7);
+  color: rgb(24 24 27);
+}
+
+.mail-compose-field::placeholder {
+  color: rgb(63 63 70 / 0.7);
+}
+
+.dark .mail-compose-field {
+  border-color: rgb(255 255 255 / 0.2);
+  background: rgb(255 255 255 / 0.09);
+  color: rgb(244 244 245);
+}
+
+.dark .mail-compose-field::placeholder {
+  color: rgb(161 161 170 / 0.82);
+}
+
+.mail-compose-textarea {
+  border-color: rgb(24 24 27 / 0.16);
+  background: rgb(255 255 255 / 0.7);
+  color: rgb(24 24 27);
+}
+
+.mail-compose-textarea::placeholder {
+  color: rgb(63 63 70 / 0.7);
+}
+
+.dark .mail-compose-textarea {
+  border-color: rgb(255 255 255 / 0.2);
+  background: rgb(255 255 255 / 0.09);
+  color: rgb(244 244 245);
+}
+
+.dark .mail-compose-textarea::placeholder {
+  color: rgb(161 161 170 / 0.82);
+}
+
+.mail-recipient-shell {
+  border-color: rgb(24 24 27 / 0.16);
+  background: rgb(255 255 255 / 0.7);
+}
+
+.dark .mail-recipient-shell {
+  border-color: rgb(255 255 255 / 0.2);
+  background: rgb(255 255 255 / 0.09);
+}
+
+.mail-recipient-input {
+  color: rgb(24 24 27);
+}
+
+.mail-recipient-input::placeholder {
+  color: rgb(63 63 70 / 0.7);
+}
+
+.dark .mail-recipient-input {
+  color: rgb(244 244 245);
+}
+
+.dark .mail-recipient-input::placeholder {
+  color: rgb(161 161 170 / 0.82);
+}
+
+.mail-recipient-chip {
+  border: 1px solid rgb(255 255 255 / 0.42);
+  background: rgb(255 255 255 / 0.74);
+  color: rgb(39 39 42);
+}
+
+.dark .mail-recipient-chip {
+  border: 1px solid rgb(255 255 255 / 0.2);
+  background: rgb(255 255 255 / 0.16);
+  color: rgb(228 228 231);
+}
+
+.mail-recipient-chip-remove:hover {
+  background: rgb(24 24 27 / 0.08);
+}
+
+.dark .mail-recipient-chip-remove:hover {
+  background: rgb(255 255 255 / 0.2);
+}

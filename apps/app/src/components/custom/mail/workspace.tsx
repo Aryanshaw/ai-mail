@@ -9,7 +9,11 @@ import { useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 interface MailWorkspaceProps {
-  user: any;
+  user: {
+    first_name?: string;
+    last_name?: string;
+    avatar?: string;
+  } | null;
   onLogout: () => void;
 }
 
@@ -20,6 +24,7 @@ const AI_PANEL_DEFAULT_WIDTH = 320;
 export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
   const [activeNav, setActiveNav] = useState<NavItemKey>("inbox");
   const [selectedMailId, setSelectedMailId] = useState<string | null>(null);
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantWidth, setAssistantWidth] = useState(AI_PANEL_DEFAULT_WIDTH);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -66,6 +71,19 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
     setIsAssistantOpen((prev) => !prev);
   }
 
+  function handleNavChange(nextNav: NavItemKey) {
+    setActiveNav(nextNav);
+
+    if (nextNav === "compose") {
+      setIsComposeOpen(true);
+      return;
+    }
+
+    if (nextNav === "inbox") {
+      setIsComposeOpen(false);
+    }
+  }
+
   return (
     <div className="relative h-full w-full overflow-hidden mail-app-colors backdrop-blur-2xl">
       <div className="pointer-events-none absolute inset-0 z-10 mail-app-overlay" />
@@ -76,7 +94,7 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
         <div className="flex h-full min-h-0 flex-1 flex-col gap-1 lg:flex-row">
           <LeftSidebar
             activeNav={activeNav}
-            onNavChange={setActiveNav}
+            onNavChange={handleNavChange}
             user={user}
             onLogout={onLogout}
           />
@@ -88,6 +106,9 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
               onSelectMail={setSelectedMailId}
               isAssistantOpen={isAssistantOpen}
               onToggleAssistant={() => setIsAssistantOpen((prev) => !prev)}
+              isComposeOpen={isComposeOpen}
+              onOpenCompose={() => setIsComposeOpen(true)}
+              onCloseCompose={() => setIsComposeOpen(false)}
             />
             <AIPanel
               messages={chatMessages}

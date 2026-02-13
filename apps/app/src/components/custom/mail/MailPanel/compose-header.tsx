@@ -1,20 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Filter, Search } from "lucide-react";
-import React from "react";
 
-const ComposeHeader = ({
-  onToggleAssistant,
-  isAssistantOpen,
-}: {
-  onToggleAssistant: any;
-  isAssistantOpen: any;
-}) => {
+interface ComposeHeaderProps {
+  onToggleAssistant: () => void;
+  isAssistantOpen: boolean;
+  onCompose: () => void;
+}
+
+const ComposeHeader = ({ onToggleAssistant, isAssistantOpen, onCompose }: ComposeHeaderProps) => {
   return (
     <div className="mb-2 flex flex-wrap items-center gap-2 rounded-md border border-black/8 bg-white/35 p-3 dark:border-white/12 dark:bg-white/5">
       <Button
         type="button"
         size="sm"
         className="mail-compose-button cursor-pointer rounded-lg text-sm"
+        onClick={onCompose}
       >
         Compose
       </Button>

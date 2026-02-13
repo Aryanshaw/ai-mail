@@ -1,9 +1,7 @@
 import { ChatMessage } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import {
-  Bot,
   ChevronLeft,
-  ChevronRight,
   GripVertical,
   SendHorizontal,
   Sparkles,
@@ -22,7 +20,7 @@ interface AIPanelProps {
 export function AIPanel({ messages, isOpen, width, onToggle, onResizeStart }: AIPanelProps) {
   return (
     <aside
-      className={`group/ai mail-ai-panel-separator mail-glass-card relative h-full min-h-0 overflow-hidden transition-[width] duration-300 ease-out ${
+      className={`group/ai mail-ai-panel-separator mail-glass-card relative h-full min-h-0 shrink-0 overflow-hidden transition-[width] duration-300 ease-out ${
         isOpen ? "w-full" : "w-14"
       }`}
       style={isOpen ? { width: `${width}px` } : undefined}
