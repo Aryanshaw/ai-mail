@@ -1,13 +1,8 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, Request, status
 from fastapi.responses import JSONResponse
 
 from app.auth.schemas import GoogleCallbackRequest, GoogleStartResponse
-from app.auth.service import (
-    complete_google_login,
-    create_google_start_payload,
-    get_current_user,
-    logout,
-)
+from app.auth.service import complete_google_login, create_google_start_payload, logout
 
 
 async def handle_google_start() -> JSONResponse:
@@ -45,11 +40,11 @@ async def handle_google_callback(payload: GoogleCallbackRequest) -> JSONResponse
         )
 
 
-async def handle_me(x_session_token: str | None) -> JSONResponse:
+async def handle_me(request: Request) -> JSONResponse:
     try:
-        if not x_session_token:
-            return JSONResponse(status_code=status.HTTP_200_OK, content={"authenticated": False})
-        user = await get_current_user(x_session_token)
+        user = getattr(request.state, "current_user", None)
+        if user is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={"authenticated": True, "user": user.model_dump(mode="json")},
@@ -65,10 +60,12 @@ async def handle_me(x_session_token: str | None) -> JSONResponse:
         )
 
 
-async def handle_logout(x_session_token: str | None) -> JSONResponse:
+async def handle_logout(request: Request) -> JSONResponse:
     try:
-        if x_session_token:
-            await logout(x_session_token)
+        session_token = getattr(request.state, "session_token", None)
+        if not session_token:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+        await logout(session_token)
         return JSONResponse(status_code=status.HTTP_200_OK, content={"ok": True})
     except HTTPException as exc:
         print(f"Error in handle_logout: {exc}")

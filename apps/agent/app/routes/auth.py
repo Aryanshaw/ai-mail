@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from app.auth.schemas import GoogleCallbackRequest
@@ -18,10 +18,10 @@ async def google_callback(payload: GoogleCallbackRequest) -> JSONResponse:
 
 
 @router.get("/me")
-async def me(x_session_token: str | None = Header(default=None)) -> JSONResponse:
-    return await handle_me(x_session_token)
+async def me(request: Request) -> JSONResponse:
+    return await handle_me(request)
 
 
 @router.post("/logout")
-async def logout_route(x_session_token: str | None = Header(default=None)) -> JSONResponse:
-    return await handle_logout(x_session_token)
+async def logout_route(request: Request) -> JSONResponse:
+    return await handle_logout(request)

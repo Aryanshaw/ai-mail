@@ -3,9 +3,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 import app as project_root
-from app.auth.routes import router as auth_router
 from app.config.db import close_db, init_db
+from app.middleware.auth import auth_middleware
 from app.routes import health_router
+from app.routes.auth import router as auth_router
 
 
 @asynccontextmanager
@@ -19,6 +20,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.middleware("http")(auth_middleware)
 
 
 def init_routes(app_instance: FastAPI) -> None:
