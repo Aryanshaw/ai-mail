@@ -3,24 +3,27 @@ import { NextRequest, NextResponse } from "next/server";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
 
 export async function GET(request: NextRequest) {
-  const sessionToken = request.cookies.get("app_session")?.value;
+  try {
+    const sessionToken = request.cookies.get("app_session")?.value;
 
-  if (!sessionToken) {
-    return NextResponse.json({ authenticated: false });
+    if (!sessionToken) {
+      return NextResponse.json({ authenticated: false }, { status: 200 });
+    }
+
+    const response = await fetch(`${BACKEND_URL}/auth/me`, {
+      method: "GET",
+      headers: {
+        "x-session-token": sessionToken,
+      },
+      cache: "no-store",
+    });
+
+    const payload = await response.json().catch(() => ({ error: "Invalid backend response" }));
+    if (response.status === 401) {
+      return NextResponse.json({ authenticated: false }, { status: 200 });
+    }
+    return NextResponse.json(payload, { status: response.status });
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
-
-  const response = await fetch(`${BACKEND_URL}/auth/me`, {
-    method: "GET",
-    headers: {
-      "x-session-token": sessionToken,
-    },
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    return NextResponse.json({ authenticated: false });
-  }
-
-  const payload = await response.json();
-  return NextResponse.json(payload);
 }
