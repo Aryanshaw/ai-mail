@@ -41,6 +41,36 @@ export const mailItems: MailItem[] = [
     category: "Personal",
     body: "Your trip is confirmed.\n\nDepart: March 2, 2026\nReturn: March 6, 2026\n\nPlease review all traveler details and reply if any corrections are needed.",
   },
+  {
+    id: "m-5",
+    sender: "Travel Desk",
+    subject: "Your trip confirmation",
+    snippet: "Itinerary and boarding details are attached to this message.",
+    dateLabel: "Mon",
+    unread: false,
+    category: "Personal",
+    body: "Your trip is confirmed.\n\nDepart: March 2, 2026\nReturn: March 6, 2026\n\nPlease review all traveler details and reply if any corrections are needed.",
+  },
+  {
+    id: "m-6",
+    sender: "Travel Desk",
+    subject: "Your trip confirmation",
+    snippet: "Itinerary and boarding details are attached to this message.",
+    dateLabel: "Mon",
+    unread: false,
+    category: "Personal",
+    body: "Your trip is confirmed.\n\nDepart: March 2, 2026\nReturn: March 6, 2026\n\nPlease review all traveler details and reply if any corrections are needed.",
+  },
+  {
+    id: "m-7",
+    sender: "Travel Desk",
+    subject: "Your trip confirmation",
+    snippet: "Itinerary and boarding details are attached to this message.",
+    dateLabel: "Mon",
+    unread: false,
+    category: "Personal",
+    body: "Your trip is confirmed.\n\nDepart: March 2, 2026\nReturn: March 6, 2026\n\nPlease review all traveler details and reply if any corrections are needed.",
+  },
 ];
 
 export const chatMessages: ChatMessage[] = [

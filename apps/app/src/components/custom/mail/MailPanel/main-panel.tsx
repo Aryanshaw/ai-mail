@@ -2,6 +2,7 @@ import { EmailDetailPanel } from "@/components/custom/mail/MailPanel/email-detai
 import { EmailListItem } from "@/components/custom/mail/MailPanel/email-list-item";
 import { MailItem } from "@/types/types";
 import ComposeHeader from "./compose-header";
+import { RefreshCcw } from "lucide-react";
 
 interface MainPanelProps {
   mails: MailItem[];
@@ -18,6 +19,10 @@ export function MainPanel({
   isAssistantOpen,
   onToggleAssistant,
 }: MainPanelProps) {
+  function refreshNewMails() {
+    console.log("Refreshing for new mails");
+  }
+
   return (
     <section className="mail-glass-card flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-2">
       {/* Primary command bar with action-first hierarchy. */}
@@ -26,8 +31,16 @@ export function MainPanel({
       {/* Unified inbox area with explicit list-detail divider. */}
       <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-md lg:flex-row backdrop-md bg-white/10 border border-black/8 dark:border-white/10">
         <div className="flex min-h-0 flex-col max-w-xs">
-          <div className="mail-panel-border border-b px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-600 dark:text-zinc-400">
-            Priority Inbox
+          <div className="mail-panel-border border-b px-4 py-3 flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-600 dark:text-zinc-400">
+              Priority Inbox
+            </p>
+            <button
+              className="dark:bg-white/10 bg-black/10 rounded-md p-2 cursor-pointer"
+              onClick={refreshNewMails}
+            >
+              <RefreshCcw size={14} />
+            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto px-2 py-2">
