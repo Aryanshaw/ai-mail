@@ -3,10 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Forward, Reply, Star } from "lucide-react";
 
 interface EmailDetailPanelProps {
-  selectedMail: MailItem;
+  selectedMail: MailItem | null;
 }
 
 export function EmailDetailPanel({ selectedMail }: EmailDetailPanelProps) {
+  if (!selectedMail) {
+    return (
+      <div className="mail-content-divider flex h-full min-h-0 items-center justify-center">
+        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">No messages</p>
+      </div>
+    );
+  }
+
   return (
     <div className="mail-content-divider flex h-full min-h-0 flex-col">
       {/* Header carries message context before body content. */}

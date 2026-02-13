@@ -20,8 +20,6 @@ export default function AppHomePage() {
     return <main className="h-full w-full" />;
   }
 
-  const fullName = `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || "AI Mail User";
-
   return (
     <main className="relative h-full w-full overflow-hidden">
       <LiquidWave
@@ -34,7 +32,7 @@ export default function AppHomePage() {
         />
 
       <div className="absolute inset-0 z-20">
-        <MailWorkspace fullName={fullName} onLogout={() => void logout().then(() => router.replace("/"))} />
+        <MailWorkspace user={user} onLogout={() => void logout().then(() => router.replace("/"))} />
       </div>
     </main>
   );

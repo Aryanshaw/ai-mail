@@ -5,7 +5,7 @@ import ComposeHeader from "./compose-header";
 
 interface MainPanelProps {
   mails: MailItem[];
-  selectedMail: MailItem;
+  selectedMail: MailItem | null;
   onSelectMail: (mailId: string) => void;
   isAssistantOpen: boolean;
   onToggleAssistant: () => void;
@@ -32,7 +32,7 @@ export function MainPanel({
 
           <div className="flex-1 overflow-y-auto px-2 py-2">
             {mails.map((mail) => {
-              const isSelected = selectedMail.id === mail.id;
+              const isSelected = selectedMail?.id === mail.id;
 
               return (
                 <EmailListItem

@@ -9,7 +9,7 @@ import { useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 interface MailWorkspaceProps {
-  fullName: string;
+  user: any;
   onLogout: () => void;
 }
 
@@ -17,17 +17,19 @@ const AI_PANEL_MIN_WIDTH = 280;
 const AI_PANEL_MAX_WIDTH = 520;
 const AI_PANEL_DEFAULT_WIDTH = 320;
 
-export function MailWorkspace({ fullName, onLogout }: MailWorkspaceProps) {
+export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
   const [activeNav, setActiveNav] = useState<NavItemKey>("inbox");
-  const [selectedMailId, setSelectedMailId] = useState(mailItems[0]?.id ?? "");
+  const [selectedMailId, setSelectedMailId] = useState<string | null>(null);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantWidth, setAssistantWidth] = useState(AI_PANEL_DEFAULT_WIDTH);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const selectedMail = useMemo(
-    () => mailItems.find((mail) => mail.id === selectedMailId) ?? mailItems[0],
-    [selectedMailId]
-  );
+  const selectedMail = useMemo(() => {
+    if (!selectedMailId) {
+      return null;
+    }
+    return mailItems.find((mail) => mail.id === selectedMailId) ?? null;
+  }, [selectedMailId]);
 
   const handleAssistantResizeStart = (event: ReactPointerEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -60,10 +62,6 @@ export function MailWorkspace({ fullName, onLogout }: MailWorkspaceProps) {
     window.addEventListener("pointerup", onPointerUp);
   };
 
-  if (!selectedMail) {
-    return null;
-  }
-
   function toggleChatPanel(){
     setIsAssistantOpen((prev) => !prev)
   }
@@ -79,7 +77,7 @@ export function MailWorkspace({ fullName, onLogout }: MailWorkspaceProps) {
           <LeftSidebar
             activeNav={activeNav}
             onNavChange={setActiveNav}
-            userLabel={fullName}
+            user= {user}
             onLogout={onLogout}
           />
 

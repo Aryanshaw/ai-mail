@@ -2,6 +2,7 @@ import { ChatMessage } from "@/components/custom/mail/types";
 import { Button } from "@/components/ui/button";
 import { Bot, ChevronLeft, ChevronRight, GripVertical, SendHorizontal, Sparkles } from "lucide-react";
 import type { PointerEvent } from "react";
+import AIAssistantHeader from "./ai-assistant-header";
 
 interface AIPanelProps {
   messages: ChatMessage[];
@@ -35,11 +36,11 @@ export function AIPanel({ messages, isOpen, width, onToggle, onResizeStart }: AI
 
       {!isOpen ? (
         <div className="flex h-full p-1.5">
-          <div className="mail-ai-collapsed-shell flex w-full flex-col items-center gap-2 rounded-md">
+          <div className="flex w-full flex-col items-center gap-2 rounded-md">
             <button
               type="button"
               onClick={onToggle}
-              className="mail-ai-collapsed-trigger inline-flex cursor-pointer items-center justify-center rounded-md border border-black/10 dark:border-white/8 p-2"
+              className="inline-flex cursor-pointer items-center justify-center rounded-md border border-black/10 dark:border-white/8 p-2"
               aria-label="Open AI assistant"
             >
               <Sparkles className="size-4" />
@@ -49,27 +50,7 @@ export function AIPanel({ messages, isOpen, width, onToggle, onResizeStart }: AI
         </div>
       ) : (
         <div className="flex h-full flex-col p-2">
-          <div className="mb-2 rounded-md border border-white/30 bg-white/35 p-3 dark:border-white/12 dark:bg-white/6">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <div className="rounded-md border border-white/40 bg-white/60 p-1.5 dark:border-white/15 dark:bg-white/10">
-                  <Bot className="size-4 text-zinc-800 dark:text-zinc-100" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">AI Assistant</p>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400">Thread-aware suggestions</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={onToggle}
-                className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-white/35 bg-white/60 p-1.5 text-zinc-700 transition-all hover:bg-white dark:border-white/18 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/16"
-                aria-label="Collapse AI assistant"
-              >
-                <ChevronRight className="size-4" />
-              </button>
-            </div>
-          </div>
+          <AIAssistantHeader onToggle={onToggle}/>
 
           {/* Message list */}
           <div className="mail-glass-inner mb-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto rounded-md p-2">
