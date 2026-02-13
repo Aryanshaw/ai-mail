@@ -30,7 +30,9 @@ export async function GET(request: NextRequest) {
       cache: "no-store",
     });
 
-    const payload = (await callbackResponse.json().catch(() => ({ error: "Invalid backend response" }))) as {
+    const payload = (await callbackResponse
+      .json()
+      .catch(() => ({ error: "Invalid backend response" }))) as {
       session_token?: string;
       expires_at?: string;
       error?: string;
@@ -38,7 +40,10 @@ export async function GET(request: NextRequest) {
 
     if (!callbackResponse.ok || !payload.session_token) {
       const fail = NextResponse.redirect(
-        new URL(`/?error=${encodeURIComponent(payload.error || "Google auth callback failed")}`, FRONTEND_URL)
+        new URL(
+          `/?error=${encodeURIComponent(payload.error || "Google auth callback failed")}`,
+          FRONTEND_URL
+        )
       );
       fail.cookies.delete("oauth_state");
       fail.cookies.delete("oauth_code_verifier");
@@ -57,7 +62,9 @@ export async function GET(request: NextRequest) {
     });
     return success;
   } catch (error) {
-    const fail = NextResponse.redirect(new URL(`/?error=${encodeURIComponent(String(error))}`, FRONTEND_URL));
+    const fail = NextResponse.redirect(
+      new URL(`/?error=${encodeURIComponent(String(error))}`, FRONTEND_URL)
+    );
     fail.cookies.delete("oauth_state");
     fail.cookies.delete("oauth_code_verifier");
     return fail;

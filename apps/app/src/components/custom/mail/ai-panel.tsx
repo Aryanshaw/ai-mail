@@ -1,6 +1,13 @@
 import { ChatMessage } from "@/components/custom/mail/types";
 import { Button } from "@/components/ui/button";
-import { Bot, ChevronLeft, ChevronRight, GripVertical, SendHorizontal, Sparkles } from "lucide-react";
+import {
+  Bot,
+  ChevronLeft,
+  ChevronRight,
+  GripVertical,
+  SendHorizontal,
+  Sparkles,
+} from "lucide-react";
 import type { PointerEvent } from "react";
 import AIAssistantHeader from "./ai-assistant-header";
 
@@ -50,7 +57,7 @@ export function AIPanel({ messages, isOpen, width, onToggle, onResizeStart }: AI
         </div>
       ) : (
         <div className="flex h-full flex-col p-2">
-          <AIAssistantHeader onToggle={onToggle}/>
+          <AIAssistantHeader onToggle={onToggle} />
 
           {/* Message list */}
           <div className="mail-glass-inner mb-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto rounded-md p-2">
@@ -74,14 +81,20 @@ export function AIPanel({ messages, isOpen, width, onToggle, onResizeStart }: AI
 
           {/* Bottom chat bar */}
           <div className="rounded-md border border-white/30 bg-white/35 p-3 dark:border-white/12 dark:bg-white/6">
-            <p className="mb-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">Ask AI for summary or quick draft</p>
+            <p className="mb-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+              Ask AI for summary or quick draft
+            </p>
             <div className="flex gap-2">
               <input
                 type="text"
                 placeholder="Ask about this thread..."
                 className="h-9 flex-1 rounded-lg border border-white/40 bg-white/70 px-2 text-sm text-zinc-900 outline-none transition-all placeholder:text-zinc-500 focus:border-white focus:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:border-white/30 dark:focus:bg-white/15"
               />
-              <Button type="button" size="sm" className="mail-send-button cursor-pointer rounded-md px-2">
+              <Button
+                type="button"
+                size="sm"
+                className="mail-send-button cursor-pointer rounded-md px-2"
+              >
                 <SendHorizontal className="size-4" />
               </Button>
             </div>

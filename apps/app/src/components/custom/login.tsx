@@ -24,7 +24,9 @@ export default function Login({ error }: LoginProps) {
             <Sparkles className="size-4" />
           </span>
           <div className="text-left">
-            <p className="text-xs font-semibold tracking-tight auth-title-colors">AI Mail Copilot</p>
+            <p className="text-xs font-semibold tracking-tight auth-title-colors">
+              AI Mail Copilot
+            </p>
             <p className="text-[11px] auth-subtitle-colors">Control your inbox with AI</p>
           </div>
         </div>

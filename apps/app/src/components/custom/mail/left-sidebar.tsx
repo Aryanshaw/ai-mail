@@ -7,7 +7,7 @@ import Image from "next/image";
 interface LeftSidebarProps {
   activeNav: NavItemKey;
   onNavChange: (nav: NavItemKey) => void;
-  user:any,
+  user: any;
   onLogout: () => void;
 }
 
@@ -20,30 +20,36 @@ const navItems = [
 ];
 
 export function LeftSidebar({ activeNav, onNavChange, user, onLogout }: LeftSidebarProps) {
-
   const fullName = `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || "AI Mail User";
-  function getInitials(name:string) {
+  function getInitials(name: string) {
     return name
       .split(" ")
-      .map(word => word[0].toUpperCase())
+      .map((word) => word[0].toUpperCase())
       .join("");
   }
-  
+
   return (
     <aside className="mail-glass-card mail-sidebar-separator flex h-full min-h-0 flex-col p-2 lg:w-[220px]">
       {/* App identity for instant orientation. */}
       <div className="mb-4 rounded-2xl border border-white/30 bg-white/35 p-4 dark:border-white/10 dark:bg-white/6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400">AI Mail</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400">
+          AI Mail
+        </p>
         <div className="flex gap-2 pt-2 pb-2 items-center">
-          {
-            user?.avatar ? (
-              <Image alt="avatar" src={user?.avatar} width={25} height={20} loading="eager" className="rounded-full"/>
-            ): (
-              <div className="text-xs rounded-full backdrop-2xl bg-white dark:bg-black/20 p-2 border border-sm">
-                  {getInitials(fullName)}
-              </div>
-            )
-          }
+          {user?.avatar ? (
+            <Image
+              alt="avatar"
+              src={user?.avatar}
+              width={25}
+              height={20}
+              loading="eager"
+              className="rounded-full"
+            />
+          ) : (
+            <div className="text-xs rounded-full backdrop-2xl bg-white dark:bg-black/20 p-2 border border-sm">
+              {getInitials(fullName)}
+            </div>
+          )}
           <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{fullName}</p>
         </div>
         <p className="mt-1 text-xs leading-5 text-zinc-600 dark:text-zinc-400">
@@ -88,10 +94,8 @@ export function LeftSidebar({ activeNav, onNavChange, user, onLogout }: LeftSide
       {/* Footer utilities stay pinned to the bottom of the sidebar. */}
       <div className="mt-auto space-y-2">
         <div className="rounded-md border border-black/10 dark:border-white/30 bg-white/35 p-2 px-4 dark:border-white/10 dark:bg-white/6 flex items-center justify-between w-full">
-          <ThemeToggle /> 
-          <p className="dark:text-gray-300 text-gray-800 text-sm">  
-            Theme toggle
-          </p>
+          <ThemeToggle />
+          <p className="dark:text-gray-300 text-gray-800 text-sm">Theme toggle</p>
         </div>
         <Button
           type="button"

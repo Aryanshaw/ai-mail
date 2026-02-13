@@ -62,8 +62,8 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
     window.addEventListener("pointerup", onPointerUp);
   };
 
-  function toggleChatPanel(){
-    setIsAssistantOpen((prev) => !prev)
+  function toggleChatPanel() {
+    setIsAssistantOpen((prev) => !prev);
   }
 
   return (
@@ -77,7 +77,7 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
           <LeftSidebar
             activeNav={activeNav}
             onNavChange={setActiveNav}
-            user= {user}
+            user={user}
             onLogout={onLogout}
           />
 

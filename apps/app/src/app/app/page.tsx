@@ -29,7 +29,7 @@ export default function AppHomePage() {
         color2="#d4d4d4"
         color3="#a3a3a3"
         autoDemo={true}
-        />
+      />
 
       <div className="absolute inset-0 z-20">
         <MailWorkspace user={user} onLogout={() => void logout().then(() => router.replace("/"))} />

@@ -28,7 +28,7 @@ interface LiquidWaveProps {
 }
 
 export default function LiquidWave({
-  color1 = "orange", 
+  color1 = "orange",
   color2 = "orange",
   color3 = "orange",
   mouseForce = 20,
@@ -64,9 +64,9 @@ export default function LiquidWave({
     // --- 1. Global / Common Classes ---
     // We recreate the classes inside useEffect or outside to avoid global state issues in React HMR/strict mode
     // Ideally, these should be separate, but for a port, keeping them scoped or module-level is fine.
-    // Given the complexity, I'll instantiate helpers inside a closure or keep them module-level 
-    // IF we are sure only one instance corresponds to one canvas. 
-    // The original code used a singleton `Common` and `Mouse`. 
+    // Given the complexity, I'll instantiate helpers inside a closure or keep them module-level
+    // IF we are sure only one instance corresponds to one canvas.
+    // The original code used a singleton `Common` and `Mouse`.
     // We should make them instance-specific to allow multiple LiquidWaves on one page.
 
     class CommonClass {
@@ -105,8 +105,7 @@ export default function LiquidWave({
         this.width = Math.max(1, Math.floor(rect.width));
         this.height = Math.max(1, Math.floor(rect.height));
         this.aspect = this.width / this.height;
-        if (this.renderer)
-          this.renderer.setSize(this.width, this.height, false);
+        if (this.renderer) this.renderer.setSize(this.width, this.height, false);
       }
 
       update() {
@@ -114,12 +113,12 @@ export default function LiquidWave({
         this.delta = this.clock.getDelta();
         this.time += this.delta;
       }
-      
+
       dispose() {
-          if (this.renderer) {
-              this.renderer.dispose();
-              this.renderer = null;
-          }
+        if (this.renderer) {
+          this.renderer.dispose();
+          this.renderer = null;
+        }
       }
     }
 
@@ -181,12 +180,7 @@ export default function LiquidWave({
 
       _onMouseMove = (event: MouseEvent) => {
         if (this.onInteract) this.onInteract();
-        if (
-          this.isAutoActive &&
-          !this.hasUserControl &&
-          !this.takeoverActive &&
-          this.container
-        ) {
+        if (this.isAutoActive && !this.hasUserControl && !this.takeoverActive && this.container) {
           const rect = this.container.getBoundingClientRect();
           const nx = (event.clientX - rect.left) / rect.width;
           const ny = (event.clientY - rect.top) / rect.height;
@@ -231,9 +225,7 @@ export default function LiquidWave({
 
       update() {
         if (this.takeoverActive) {
-          const t =
-            (performance.now() - this.takeoverStartTime) /
-            (this.takeoverDuration * 1000);
+          const t = (performance.now() - this.takeoverStartTime) / (this.takeoverDuration * 1000);
           if (t >= 1) {
             this.takeoverActive = false;
             this.coords.copy(this.takeoverTo);
@@ -246,10 +238,8 @@ export default function LiquidWave({
         }
         this.diff.subVectors(this.coords, this.coords_old);
         this.coords_old.copy(this.coords);
-        if (this.coords_old.x === 0 && this.coords_old.y === 0)
-          this.diff.set(0, 0);
-        if (this.isAutoActive && !this.takeoverActive)
-          this.diff.multiplyScalar(this.autoIntensity);
+        if (this.coords_old.x === 0 && this.coords_old.y === 0) this.diff.set(0, 0);
+        if (this.isAutoActive && !this.takeoverActive) this.diff.multiplyScalar(this.autoIntensity);
       }
     }
 
@@ -280,10 +270,7 @@ export default function LiquidWave({
 
       pickNewTarget() {
         const r = Math.random;
-        this.target.set(
-          (r() * 2 - 1) * (1 - this.margin),
-          (r() * 2 - 1) * (1 - this.margin)
-        );
+        this.target.set((r() * 2 - 1) * (1 - this.margin), (r() * 2 - 1) * (1 - this.margin));
       }
 
       forceStop() {
@@ -324,10 +311,7 @@ export default function LiquidWave({
         dir.normalize();
         let ramp = 1;
         if (this.rampDurationMs > 0) {
-          const t = Math.min(
-            1,
-            (now - this.activationTime) / this.rampDurationMs
-          );
+          const t = Math.min(1, (now - this.activationTime) / this.rampDurationMs);
           ramp = t * t * (3 - 2 * t);
         }
         const step = this.speed * dtSec * ramp;
@@ -518,11 +502,10 @@ export default function LiquidWave({
       }
     `;
 
-
     // --- 3. Instances inside component scope ---
     const Common = new CommonClass();
     const Mouse = new MouseClass();
-    
+
     // --- 4. Simulation Classes ---
     class ShaderPass {
       props: any;
@@ -550,7 +533,7 @@ export default function LiquidWave({
       }
 
       run() {
-        if(!Common.renderer) return;
+        if (!Common.renderer) return;
         Common.renderer.setRenderTarget(this.props.output || null);
         Common.renderer.render(this.scene, this.camera);
         Common.renderer.setRenderTarget(null);
@@ -589,10 +572,7 @@ export default function LiquidWave({
         const vertices_boundary = new Float32Array([
           -1, -1, 0, -1, 1, 0, -1, 1, 0, 1, 1, 0, 1, 1, 0, 1, -1, 0, 1, -1, 0, -1, -1, 0,
         ]);
-        boundaryG.setAttribute(
-          "position",
-          new THREE.BufferAttribute(vertices_boundary, 3)
-        );
+        boundaryG.setAttribute("position", new THREE.BufferAttribute(vertices_boundary, 3));
         const boundaryM = new THREE.RawShaderMaterial({
           vertexShader: line_vert,
           fragmentShader: advection_frag,
@@ -604,7 +584,7 @@ export default function LiquidWave({
 
       update({ dt, isBounce, BFECC }: any) {
         this.uniforms.dt.value = dt;
-        if(this.line) this.line.visible = isBounce;
+        if (this.line) this.line.visible = isBounce;
         this.uniforms.isBFECC.value = BFECC;
         super.run();
       }
@@ -653,7 +633,7 @@ export default function LiquidWave({
           Math.max(Mouse.coords.y, -1 + cursorSizeY + props.cellScale.y * 2),
           1 - cursorSizeY - props.cellScale.y * 2
         );
-        
+
         if (this.mouse) {
           const uniforms = (this.mouse.material as THREE.RawShaderMaterial).uniforms;
           uniforms.force.value.set(forceX, forceY);
@@ -835,9 +815,9 @@ export default function LiquidWave({
         this.cellScale.set(px_x, px_y);
         this.fboSize.set(width, height);
       }
-      
+
       getFloatType() {
-        // We can just return THREE.FloatType or HalfFloatType. 
+        // We can just return THREE.FloatType or HalfFloatType.
         // Some mobile devices might need HalfFloatType, but modern ones support FloatType mostly.
         const isIOS = /(iPad|iPhone|iPod)/i.test(navigator.userAgent);
         return isIOS ? THREE.HalfFloatType : THREE.FloatType;
@@ -855,11 +835,7 @@ export default function LiquidWave({
           wrapT: THREE.ClampToEdgeWrapping,
         };
         for (let key in this.fbos) {
-          this.fbos[key] = new THREE.WebGLRenderTarget(
-            this.fboSize.x,
-            this.fboSize.y,
-            opts
-          );
+          this.fbos[key] = new THREE.WebGLRenderTarget(this.fboSize.x, this.fboSize.y, opts);
         }
       }
 
@@ -922,16 +898,18 @@ export default function LiquidWave({
         } else {
           this.boundarySpace.copy(this.cellScale);
         }
-        if (this.advection) this.advection.update({
-          dt: this.options.dt,
-          isBounce: this.options.isBounce,
-          BFECC: this.options.BFECC,
-        });
-        if (this.externalForce) this.externalForce.update({
-          cursor_size: this.options.cursor_size,
-          mouse_force: this.options.mouse_force,
-          cellScale: this.cellScale,
-        });
+        if (this.advection)
+          this.advection.update({
+            dt: this.options.dt,
+            isBounce: this.options.isBounce,
+            BFECC: this.options.BFECC,
+          });
+        if (this.externalForce)
+          this.externalForce.update({
+            cursor_size: this.options.cursor_size,
+            mouse_force: this.options.mouse_force,
+            cellScale: this.cellScale,
+          });
         let vel = this.fbos.vel_1;
         if (this.options.isViscous && this.viscous) {
           vel = this.viscous.update({
@@ -942,10 +920,10 @@ export default function LiquidWave({
         }
         if (this.divergence) this.divergence.update({ vel });
         if (this.poisson) {
-           const pressure = this.poisson.update({
-              iterations: this.options.iterations_poisson,
-           });
-           if (this.pressure) this.pressure.update({ vel, pressure });
+          const pressure = this.poisson.update({
+            iterations: this.options.iterations_poisson,
+          });
+          if (this.pressure) this.pressure.update({ vel, pressure });
         }
       }
     }
@@ -959,69 +937,69 @@ export default function LiquidWave({
       constructor() {
         this.scene = new THREE.Scene();
         this.camera = new THREE.Camera();
-        
+
         // Dynamic palette texture generation
         const colors = [color1, color2, color3].filter(Boolean) as string[];
 
         function makePaletteTexture(stops: string[]) {
-            let arr: string[];
-            if (Array.isArray(stops) && stops.length > 0) {
-              if (stops.length === 1) {
-                arr = [stops[0], stops[0]];
-              } else {
-                arr = stops;
-              }
+          let arr: string[];
+          if (Array.isArray(stops) && stops.length > 0) {
+            if (stops.length === 1) {
+              arr = [stops[0], stops[0]];
             } else {
-              arr = ["#ffffff", "#ffffff"];
+              arr = stops;
             }
-            const w = arr.length;
-            const data = new Uint8Array(w * 4);
-            for (let i = 0; i < w; i++) {
-              const c = new THREE.Color(arr[i]);
-              data[i * 4 + 0] = Math.round(c.r * 255);
-              data[i * 4 + 1] = Math.round(c.g * 255);
-              data[i * 4 + 2] = Math.round(c.b * 255);
-              data[i * 4 + 3] = 255;
-            }
-            const tex = new THREE.DataTexture(data, w, 1, THREE.RGBAFormat);
-            tex.magFilter = THREE.LinearFilter;
-            tex.minFilter = THREE.LinearFilter;
-            tex.wrapS = THREE.ClampToEdgeWrapping;
-            tex.wrapT = THREE.ClampToEdgeWrapping;
-            tex.needsUpdate = true;
-            return tex;
+          } else {
+            arr = ["#ffffff", "#ffffff"];
+          }
+          const w = arr.length;
+          const data = new Uint8Array(w * 4);
+          for (let i = 0; i < w; i++) {
+            const c = new THREE.Color(arr[i]);
+            data[i * 4 + 0] = Math.round(c.r * 255);
+            data[i * 4 + 1] = Math.round(c.g * 255);
+            data[i * 4 + 2] = Math.round(c.b * 255);
+            data[i * 4 + 3] = 255;
+          }
+          const tex = new THREE.DataTexture(data, w, 1, THREE.RGBAFormat);
+          tex.magFilter = THREE.LinearFilter;
+          tex.minFilter = THREE.LinearFilter;
+          tex.wrapS = THREE.ClampToEdgeWrapping;
+          tex.wrapT = THREE.ClampToEdgeWrapping;
+          tex.needsUpdate = true;
+          return tex;
         }
 
         const paletteTex = makePaletteTexture(colors);
         const bgVec4 = new THREE.Vector4(0, 0, 0, 0); // Transparent background
 
         this.simulation = new Simulation({
-            iterations_poisson: iterationsPoisson,
-            iterations_viscous: iterationsViscous,
-            mouse_force: mouseForce,
-            resolution: resolution,
-            cursor_size: cursorSize,
-            viscous: viscous,
-            isBounce: isBounce,
-            dt: dt,
-            isViscous: isViscous,
-            BFECC: BFECC,
+          iterations_poisson: iterationsPoisson,
+          iterations_viscous: iterationsViscous,
+          mouse_force: mouseForce,
+          resolution: resolution,
+          cursor_size: cursorSize,
+          viscous: viscous,
+          isBounce: isBounce,
+          dt: dt,
+          isViscous: isViscous,
+          BFECC: BFECC,
         });
 
         this.output = new THREE.Mesh(
-            new THREE.PlaneGeometry(2, 2),
-            new THREE.RawShaderMaterial({
-                vertexShader: face_vert,
-                fragmentShader: color_frag,
-                transparent: true,
-                depthWrite: false,
-                uniforms: {
-                    velocity: { value: this.simulation.fbos.vel_0.texture },
-                    boundarySpace: { value: new THREE.Vector2() },
-                    palette: { value: paletteTex },
-                    bgColor: { value: bgVec4 },
-                }
-            })
+          new THREE.PlaneGeometry(2, 2),
+          new THREE.RawShaderMaterial({
+            vertexShader: face_vert,
+            fragmentShader: color_frag,
+            transparent: true,
+            depthWrite: false,
+            uniforms: {
+              velocity: { value: this.simulation.fbos.vel_0.texture },
+              boundarySpace: { value: new THREE.Vector2() },
+              palette: { value: paletteTex },
+              bgColor: { value: bgVec4 },
+            },
+          })
         );
         this.scene.add(this.output);
       }
@@ -1032,13 +1010,12 @@ export default function LiquidWave({
 
       update() {
         this.simulation.update();
-        if(Common.renderer) {
-            Common.renderer.setRenderTarget(null);
-            Common.renderer.render(this.scene, this.camera);
+        if (Common.renderer) {
+          Common.renderer.setRenderTarget(null);
+          Common.renderer.render(this.scene, this.camera);
         }
       }
     }
-
 
     class WebGLManager {
       output: Output | null = null;
@@ -1055,70 +1032,70 @@ export default function LiquidWave({
         this.output = new Output();
         this.lastUserInteraction = performance.now();
         Mouse.onInteract = () => {
-            this.lastUserInteraction = performance.now();
-            if (this.autoDriver) this.autoDriver.forceStop();
+          this.lastUserInteraction = performance.now();
+          if (this.autoDriver) this.autoDriver.forceStop();
         };
         Mouse.autoIntensity = autoIntensity;
         Mouse.takeoverDuration = takeoverDuration;
-        
+
         this.autoDriver = new AutoDriver(Mouse, this, {
-            enabled: autoDemo,
-            speed: autoSpeed,
-            resumeDelay: autoResumeDelay,
-            rampDuration: autoRampDuration,
+          enabled: autoDemo,
+          speed: autoSpeed,
+          resumeDelay: autoResumeDelay,
+          rampDuration: autoRampDuration,
         });
       }
 
       resize() {
         Common.resize();
-        if(this.output) this.output.resize();
+        if (this.output) this.output.resize();
       }
 
       render() {
         if (this.autoDriver) this.autoDriver.update();
         Mouse.update();
         Common.update();
-        if(this.output) this.output.update();
-      }
-      
-      loop = () => {
-          if(!this.running) return;
-          this.render();
-          rafRef.current = requestAnimationFrame(this.loop);
+        if (this.output) this.output.update();
       }
 
+      loop = () => {
+        if (!this.running) return;
+        this.render();
+        rafRef.current = requestAnimationFrame(this.loop);
+      };
+
       start() {
-          if(this.running) return;
-          this.running = true;
-          this.loop();
+        if (this.running) return;
+        this.running = true;
+        this.loop();
       }
-      
+
       pause() {
-          this.running = false;
-          if(rafRef.current) {
-              cancelAnimationFrame(rafRef.current);
-              rafRef.current = null;
-          }
+        this.running = false;
+        if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
       }
 
       dispose() {
-          this.pause();
-          Mouse.dispose();
-          Common.dispose();
+        this.pause();
+        Mouse.dispose();
+        Common.dispose();
       }
     }
 
     // --- 5. Initializing Logic ---
     const wrapper = mountRef.current;
-    
+
     // Cleanup any existing canvas
-    if(wrapper.querySelector('canvas')) {
-        wrapper.innerHTML = '';
-        wrapper.appendChild(document.createElement('style')).textContent = `
+    if (wrapper.querySelector("canvas")) {
+      wrapper.innerHTML = "";
+      wrapper.appendChild(document.createElement("style")).textContent = `
           .liquid-ether-container { position: relative; overflow: hidden; width: 100%; height: 100%; touch-action: none; }
         `;
     } else {
-        wrapper.appendChild(document.createElement('style')).textContent = `
+      wrapper.appendChild(document.createElement("style")).textContent = `
           .liquid-ether-container { position: relative; overflow: hidden; width: 100%; height: 100%; touch-action: none; }
         `;
     }
@@ -1129,56 +1106,75 @@ export default function LiquidWave({
 
     // Resize Observer
     const ro = new ResizeObserver(() => {
-        if (resizeRafRef.current) cancelAnimationFrame(resizeRafRef.current);
-        resizeRafRef.current = requestAnimationFrame(() => {
-           if(webglRef.current) webglRef.current.resize();
-        });
+      if (resizeRafRef.current) cancelAnimationFrame(resizeRafRef.current);
+      resizeRafRef.current = requestAnimationFrame(() => {
+        if (webglRef.current) webglRef.current.resize();
+      });
     });
     ro.observe(wrapper);
     resizeObserverRef.current = ro;
 
     // Visibility (Intersection) Observer
-    const io = new IntersectionObserver((entries) => {
+    const io = new IntersectionObserver(
+      (entries) => {
         const entry = entries[0];
         const isVisible = entry.isIntersecting; // && entry.intersectionRatio > 0;
         isVisibleRef.current = isVisible;
-        if(webglRef.current) {
-            if(isVisible && !document.hidden) {
-                webglRef.current.start();
-            } else {
-                webglRef.current.pause();
-            }
+        if (webglRef.current) {
+          if (isVisible && !document.hidden) {
+            webglRef.current.start();
+          } else {
+            webglRef.current.pause();
+          }
         }
-    }, { threshold: 0 });
+      },
+      { threshold: 0 }
+    );
     io.observe(wrapper);
     intersectionObserverRef.current = io;
 
     // Visibility Change
     const onVisibilityChange = () => {
-        if(document.hidden) {
-            if(webglRef.current) webglRef.current.pause();
-        } else if(isVisibleRef.current) {
-            if(webglRef.current) webglRef.current.start();
-        }
+      if (document.hidden) {
+        if (webglRef.current) webglRef.current.pause();
+      } else if (isVisibleRef.current) {
+        if (webglRef.current) webglRef.current.start();
+      }
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        if (resizeObserverRef.current) resizeObserverRef.current.disconnect();
-        if (intersectionObserverRef.current) intersectionObserverRef.current.disconnect();
-        document.removeEventListener("visibilitychange", onVisibilityChange);
-        if (webglRef.current) webglRef.current.dispose();
-        if (wrapper && wrapper.querySelector('canvas')) {
-          wrapper.innerHTML = ''; // Clear canvas
-        }
-        Common.dispose(); // Ensure Three.js context is cleaned
-        Mouse.dispose();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (resizeObserverRef.current) resizeObserverRef.current.disconnect();
+      if (intersectionObserverRef.current) intersectionObserverRef.current.disconnect();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      if (webglRef.current) webglRef.current.dispose();
+      if (wrapper && wrapper.querySelector("canvas")) {
+        wrapper.innerHTML = ""; // Clear canvas
+      }
+      Common.dispose(); // Ensure Three.js context is cleaned
+      Mouse.dispose();
     };
   }, [
-    color1, color2, color3, mouseForce, cursorSize, isViscous, viscous, 
-    iterationsViscous, iterationsPoisson, dt, BFECC, resolution, isBounce,
-    autoDemo, autoSpeed, autoIntensity, takeoverDuration, autoResumeDelay, autoRampDuration
+    color1,
+    color2,
+    color3,
+    mouseForce,
+    cursorSize,
+    isViscous,
+    viscous,
+    iterationsViscous,
+    iterationsPoisson,
+    dt,
+    BFECC,
+    resolution,
+    isBounce,
+    autoDemo,
+    autoSpeed,
+    autoIntensity,
+    takeoverDuration,
+    autoResumeDelay,
+    autoRampDuration,
   ]);
 
   return (
