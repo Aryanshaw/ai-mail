@@ -3,6 +3,7 @@ import base64
 import os
 import uuid
 from datetime import UTC, datetime, timedelta
+from email.message import EmailMessage
 
 import aiohttp
 from fastapi import HTTPException, status
@@ -14,6 +15,7 @@ from app.mail.schemas import (
     MailListItem,
     MailListResponse,
     MarkMailReadResponse,
+    SendMailResponse,
 )
 from app.models import OauthAccount
 from app.utils.constants import GMAIL_API_BASE_URL, GOOGLE_TOKEN_URL, PROVIDER_NAME
@@ -242,6 +244,7 @@ class GmailMailService:
 
             header_map = self._extract_header_map(payload.get("payload", {}).get("headers", []))
             sender = header_map.get("from", "Unknown sender")
+            to_recipient = header_map.get("to")
             subject = header_map.get("subject", "(no subject)")
             internal_date = payload.get("internalDate")
             unread = "UNREAD" in (payload.get("labelIds") or [])
@@ -252,6 +255,7 @@ class GmailMailService:
             return MailDetailResponse(
                 id=payload.get("id", message_id),
                 sender=sender,
+                to=to_recipient,
                 subject=subject,
                 snippet=payload.get("snippet", ""),
                 body=body or payload.get("snippet", ""),
@@ -304,6 +308,65 @@ class GmailMailService:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Failed to update message read state",
+            ) from exc
+
+    async def send_message(
+        self,
+        user_id: str,
+        to: str,
+        cc: str | None,
+        subject: str,
+        body: str,
+    ) -> SendMailResponse:
+        """Send an email through Gmail using RFC822 raw message payload."""
+        try:
+            access_token = await self.token_service.get_valid_access_token(user_id)
+            headers = {
+                "Authorization": f"Bearer {access_token}",
+                "Content-Type": "application/json",
+            }
+
+            mime_message = EmailMessage()
+            mime_message["To"] = to
+            if cc:
+                mime_message["Cc"] = cc
+            mime_message["Subject"] = subject
+            mime_message.set_content(body)
+
+            raw_message = base64.urlsafe_b64encode(mime_message.as_bytes()).decode().rstrip("=")
+
+            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=20)) as client:
+                async with client.post(
+                    f"{GMAIL_API_BASE_URL}/users/me/messages/send",
+                    headers=headers,
+                    json={"raw": raw_message},
+                ) as response:
+                    payload = await response.json(content_type=None)
+                    if response.status >= 400:
+                        detail = payload.get("error", {}).get(
+                            "message", "Failed to send mail message"
+                        )
+                        raise HTTPException(
+                            status_code=status.HTTP_502_BAD_GATEWAY,
+                            detail=detail,
+                        )
+
+            message_id = payload.get("id")
+            if not message_id:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Invalid Gmail send response",
+                )
+
+            return SendMailResponse(ok=True, id=message_id)
+        except HTTPException as exc:
+            print(f"Error in GmailMailService.send_message: {exc}")
+            raise
+        except Exception as exc:
+            print(f"Error in GmailMailService.send_message: {exc}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to send mail message",
             ) from exc
 
     async def _fetch_list_items(

@@ -18,6 +18,7 @@ class MailListResponse(BaseModel):
 class MailDetailResponse(BaseModel):
     id: str
     sender: str
+    to: str | None = None
     subject: str
     snippet: str
     body: str
@@ -30,3 +31,15 @@ class MarkMailReadResponse(BaseModel):
     ok: bool
     id: str
     unread: bool
+
+
+class SendMailRequest(BaseModel):
+    to: str
+    cc: str | None = None
+    subject: str
+    body: str
+
+
+class SendMailResponse(BaseModel):
+    ok: bool
+    id: str

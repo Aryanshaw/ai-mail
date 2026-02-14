@@ -1,7 +1,7 @@
 "use client";
 
-import { getInbox, getMailDetail, getSent, markMailRead } from "@/services/mail-api";
-import { MailDetail, MailItem, MailboxType } from "@/types/types";
+import { getInbox, getMailDetail, getSent, markMailRead, sendMail } from "@/services/mail-api";
+import { MailDetail, MailItem, MailboxType, SendMailPayload } from "@/types/types";
 import { useCallback, useMemo, useState } from "react";
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -16,6 +16,7 @@ export function useMail() {
   const [isListLoading, setIsListLoading] = useState(false);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isSendingMail, setIsSendingMail] = useState(false);
 
   const fetchList = useCallback(
     async (targetMailbox: MailboxType, pageToken?: string | null, append = false) => {
@@ -149,6 +150,22 @@ export function useMail() {
 
   const unreadCount = useMemo(() => mails.filter((mail) => mail.unread).length, [mails]);
 
+  const sendComposeMail = useCallback(
+    async (payload: SendMailPayload) => {
+      try {
+        setIsSendingMail(true);
+        await sendMail(payload);
+        await refreshCurrentMailbox();
+      } catch (error) {
+        console.error("Error in useMail.sendComposeMail:", error);
+        throw error;
+      } finally {
+        setIsSendingMail(false);
+      }
+    },
+    [refreshCurrentMailbox]
+  );
+
   return {
     mailbox,
     mails,
@@ -159,11 +176,13 @@ export function useMail() {
     isListLoading,
     isDetailLoading,
     isLoadingMore,
+    isSendingMail,
     hasMore: !!nextPageToken,
     loadInitialInbox,
     loadMailbox,
     refreshCurrentMailbox,
     loadMore,
     openMail,
+    sendComposeMail,
   };
 }

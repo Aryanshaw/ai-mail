@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api-client";
-import { MailDetail, MailListResponse } from "@/types/types";
+import { MailDetail, MailListResponse, SendMailPayload } from "@/types/types";
 
 export async function getInbox(params: {
   pageToken?: string | null;
@@ -36,5 +36,12 @@ export async function markMailRead(messageId: string): Promise<{ ok: boolean; id
   const response = await apiClient.post<{ ok: boolean; id: string; unread: boolean }>(
     `/mail/${messageId}/read`
   );
+  return response.data;
+}
+
+export async function sendMail(payload: SendMailPayload): Promise<{ ok: boolean; id: string }> {
+  const response = await apiClient.post<{ ok: boolean; id: string }>("/mail/send", {
+    body: payload,
+  });
   return response.data;
 }

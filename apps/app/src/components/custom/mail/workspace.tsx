@@ -44,6 +44,8 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
     refreshCurrentMailbox,
     loadMore,
     openMail,
+    sendComposeMail,
+    isSendingMail,
   } = useMail();
 
   useEffect(() => {
@@ -132,8 +134,10 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
               isDetailLoading={isDetailLoading}
               isLoadingMore={isLoadingMore}
               hasMore={hasMore}
+              isSendingMail={isSendingMail}
               onLoadMore={() => void loadMore()}
               onRefresh={() => void refreshCurrentMailbox()}
+              onSendComposeMail={(draft) => sendComposeMail(draft)}
             />
             <AIPanel
               messages={chatMessages}

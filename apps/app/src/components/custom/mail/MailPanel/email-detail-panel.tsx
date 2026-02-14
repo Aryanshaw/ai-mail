@@ -28,6 +28,9 @@ export function EmailDetailPanel({ selectedMail }: EmailDetailPanelProps) {
           {selectedMail.subject}
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">From {selectedMail.sender}</p>
+        {selectedMail.to ? (
+          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">To {selectedMail.to}</p>
+        ) : null}
       </div>
 
       {/* Body remains scrollable while header and actions stay anchored. */}

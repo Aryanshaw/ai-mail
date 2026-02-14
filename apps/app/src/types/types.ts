@@ -4,6 +4,7 @@ export type MailboxType = "inbox" | "sent";
 export interface MailItem {
   id: string;
   sender: string;
+  to?: string | null;
   subject: string;
   snippet: string;
   dateLabel: string;
@@ -20,6 +21,13 @@ export interface MailDetail extends MailItem {
 export interface MailListResponse {
   items: MailItem[];
   nextPageToken: string | null;
+}
+
+export interface SendMailPayload {
+  to: string;
+  cc: string;
+  subject: string;
+  body: string;
 }
 
 export interface ChatMessage {

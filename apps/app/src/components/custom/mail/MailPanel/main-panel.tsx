@@ -4,7 +4,7 @@ import { EmailListItem } from "@/components/custom/mail/MailPanel/email-list-ite
 import { MailDetailSkeleton } from "@/components/custom/mail/MailPanel/mail-detail-skeleton";
 import { MailListFooter } from "@/components/custom/mail/MailPanel/mail-list-footer";
 import { MailListSkeleton } from "@/components/custom/mail/MailPanel/mail-list-skeleton";
-import { MailItem } from "@/types/types";
+import { MailItem, SendMailPayload } from "@/types/types";
 import { RefreshCcw } from "lucide-react";
 import ComposeHeader from "./compose-header";
 
@@ -22,9 +22,11 @@ interface MainPanelProps {
   isListLoading: boolean;
   isDetailLoading: boolean;
   isLoadingMore: boolean;
+  isSendingMail: boolean;
   hasMore: boolean;
   onLoadMore: () => void;
   onRefresh: () => void;
+  onSendComposeMail: (draft: SendMailPayload) => Promise<void>;
 }
 
 export function MainPanel({
@@ -41,13 +43,20 @@ export function MainPanel({
   isListLoading,
   isDetailLoading,
   isLoadingMore,
+  isSendingMail,
   hasMore,
   onLoadMore,
   onRefresh,
+  onSendComposeMail,
 }: MainPanelProps) {
-  function handleSendComposeMail(draft: { to: string; cc: string; subject: string; body: string }) {
+  async function handleSendComposeMail(draft: {
+    to: string;
+    cc: string;
+    subject: string;
+    body: string;
+  }) {
     try {
-      console.log("handleSendComposeMail: Sending mail draft", draft);
+      await onSendComposeMail(draft);
       onCloseCompose();
     } catch (error) {
       console.error("handleSendComposeMail: Failed to send mail draft", error);
@@ -121,7 +130,11 @@ export function MainPanel({
 
         <div className="h-full min-h-0 flex-1">
           {isComposeOpen ? (
-            <ComposeWorkspace onClose={onCloseCompose} onSend={handleSendComposeMail} />
+            <ComposeWorkspace
+              onClose={onCloseCompose}
+              onSend={handleSendComposeMail}
+              isSending={isSendingMail}
+            />
           ) : isDetailLoading ? (
             <MailDetailSkeleton />
           ) : (

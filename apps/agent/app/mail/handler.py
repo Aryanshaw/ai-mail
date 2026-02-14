@@ -66,3 +66,25 @@ class MailHandler:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={"error": "Internal server error"},
             )
+
+    async def handle_send_message(
+        self,
+        user_id: str,
+        to: str,
+        cc: str | None,
+        subject: str,
+        body: str,
+    ) -> JSONResponse:
+        """Send a compose draft via Gmail API and return send result."""
+        try:
+            result = await self.mail_service.send_message(user_id, to, cc, subject, body)
+            return JSONResponse(status_code=status.HTTP_200_OK, content=result.model_dump())
+        except HTTPException as exc:
+            print(f"Error in MailHandler.handle_send_message: {exc}")
+            return JSONResponse(status_code=exc.status_code, content={"error": exc.detail})
+        except Exception as exc:
+            print(f"Error in MailHandler.handle_send_message: {exc}")
+            return JSONResponse(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content={"error": "Internal server error"},
+            )

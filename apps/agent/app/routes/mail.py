@@ -2,6 +2,7 @@ from fastapi import APIRouter, Query, Request
 from fastapi.responses import JSONResponse
 
 from app.mail.handler import MailHandler
+from app.mail.schemas import SendMailRequest
 
 router = APIRouter(prefix="/mail", tags=["mail"])
 mail_handler = MailHandler()
@@ -37,3 +38,15 @@ async def get_message_detail(request: Request, message_id: str) -> JSONResponse:
 async def mark_message_read(request: Request, message_id: str) -> JSONResponse:
     user_id = request.state.current_user.id
     return await mail_handler.handle_mark_message_read(user_id, message_id)
+
+
+@router.post("/send")
+async def send_message(request: Request, payload: SendMailRequest) -> JSONResponse:
+    user_id = request.state.current_user.id
+    return await mail_handler.handle_send_message(
+        user_id=user_id,
+        to=payload.to,
+        cc=payload.cc,
+        subject=payload.subject,
+        body=payload.body,
+    )

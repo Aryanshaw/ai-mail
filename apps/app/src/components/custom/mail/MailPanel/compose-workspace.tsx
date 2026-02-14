@@ -15,7 +15,8 @@ export interface ComposeDraft {
 
 interface ComposeWorkspaceProps {
   onClose: () => void;
-  onSend: (draft: ComposeDraft) => void;
+  onSend: (draft: ComposeDraft) => Promise<void>;
+  isSending: boolean;
 }
 
 const INITIAL_DRAFT: ComposeDraft = {
@@ -47,7 +48,7 @@ function appendRecipientIfMissing(existingRecipients: string[], rawValue: string
   return [...existingRecipients, normalizedRecipient];
 }
 
-export function ComposeWorkspace({ onClose, onSend }: ComposeWorkspaceProps) {
+export function ComposeWorkspace({ onClose, onSend, isSending }: ComposeWorkspaceProps) {
   const [draft, setDraft] = useState<ComposeDraft>(INITIAL_DRAFT);
   const [toRecipients, setToRecipients] = useState<string[]>([]);
   const [ccRecipients, setCcRecipients] = useState<string[]>([]);
@@ -130,7 +131,7 @@ export function ComposeWorkspace({ onClose, onSend }: ComposeWorkspaceProps) {
     onClose();
   };
 
-  const handleSend = (event: FormEvent<HTMLFormElement>) => {
+  const handleSend = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const finalizedToRecipients = appendRecipientIfMissing(toRecipients, toInputValue);
@@ -141,18 +142,22 @@ export function ComposeWorkspace({ onClose, onSend }: ComposeWorkspaceProps) {
       return;
     }
 
-    onSend({
-      ...draft,
-      to: finalizedToRecipients.join(", "),
-      cc: finalizedCcRecipients.join(", "),
-    });
+    try {
+      await onSend({
+        ...draft,
+        to: finalizedToRecipients.join(", "),
+        cc: finalizedCcRecipients.join(", "),
+      });
 
-    setDraft(INITIAL_DRAFT);
-    setToRecipients([]);
-    setCcRecipients([]);
-    setToInputValue("");
-    setCcInputValue("");
-    setToErrorMessage("");
+      setDraft(INITIAL_DRAFT);
+      setToRecipients([]);
+      setCcRecipients([]);
+      setToInputValue("");
+      setCcInputValue("");
+      setToErrorMessage("");
+    } catch (error) {
+      console.error("Error in ComposeWorkspace.handleSend:", error);
+    }
   };
 
   return (
@@ -271,12 +276,17 @@ export function ComposeWorkspace({ onClose, onSend }: ComposeWorkspaceProps) {
               variant="ghost"
               className="mail-chip-button cursor-pointer rounded-lg px-4"
               onClick={handleDiscard}
+              disabled={isSending}
             >
               Discard
             </Button>
-            <Button type="submit" className="mail-send-button cursor-pointer rounded-lg px-4">
+            <Button
+              type="submit"
+              className="mail-send-button cursor-pointer rounded-lg px-4"
+              disabled={isSending}
+            >
               <Send className="size-4" />
-              Send
+              {isSending ? "Sending..." : "Send"}
             </Button>
           </div>
         </footer>
