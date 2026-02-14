@@ -96,6 +96,12 @@ class SearchAgent:
                 mail_service=self.mail_service,
                 settings=self.settings,
                 tool_state=tool_state,
+                default_mailbox=str(context.get("activeMailbox") or "inbox"),
+                selected_mail_id=(
+                    str(context.get("selectedMailId"))
+                    if context.get("selectedMailId")
+                    else None
+                ),
             ).create_tools()
 
             llm = self._build_llm(provider)
@@ -115,7 +121,9 @@ class SearchAgent:
                                 f"Context JSON: {json.dumps(context)}\n"
                                 f"Current datetime reference: {current_datetime_reference}\n"
                                 "If user asks semantic topic (e.g. rejection mails), craft Gmail "
-                                "queries with relevant keywords and retrieve candidates."
+                                "queries with relevant keywords and retrieve candidates. "
+                                "If user asks to summarize/read the currently open email, "
+                                "call get_selected_email_detail before answering."
                             ),
                         }
                     ]

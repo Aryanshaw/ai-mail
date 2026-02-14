@@ -20,6 +20,12 @@ SEARCH_AGENT_SYSTEM_PROMPT_XML = """
       like "today", "yesterday", "last week", and "last month".
       Never fabricate message ids.
     </rule>
+    <rule id="open_email_summary">
+      If user asks to summarize/read/explain the currently open email,
+      call get_selected_email_detail first using Context.selectedMailId.
+      If selected mail id is missing, do not guess:
+      return a short response asking the user to open an email first and CLEAR_AI_RESULTS action.
+    </rule>
   </routing_rules>
 
   <output_format>

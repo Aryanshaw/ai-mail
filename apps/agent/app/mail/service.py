@@ -1,6 +1,8 @@
 import asyncio
 import base64
+import html
 import os
+import re
 import uuid
 from datetime import UTC, datetime, timedelta
 from email.message import EmailMessage
@@ -165,6 +167,24 @@ class GmailMailService:
 
     def __init__(self):
         self.token_service = GmailTokenService()
+
+    def extract_ai_readable_content(self, detail: MailDetailResponse) -> str:
+        """Build plain AI-readable mail content by preferring HTML text then plain body/snippet."""
+        try:
+            html_body = detail.html_body
+            if html_body:
+                normalized_html_text = self._html_to_text(html_body)
+                if normalized_html_text:
+                    return normalized_html_text
+
+            plain_body = (detail.body or "").strip()
+            if plain_body:
+                return plain_body
+
+            return (detail.snippet or "").strip()
+        except Exception as exc:
+            print(f"Error in GmailMailService.extract_ai_readable_content: {exc}")
+            return (detail.snippet or "").strip()
 
     async def list_messages(
         self,
@@ -500,6 +520,27 @@ class GmailMailService:
         return {
             str(header.get("name", "")).lower(): str(header.get("value", "")) for header in headers
         }
+
+    def _html_to_text(self, html_content: str) -> str:
+        """Convert HTML mail body into readable plain text for AI summarization prompts."""
+        try:
+            if not html_content:
+                return ""
+            without_style = re.sub(
+                r"<(script|style)[^>]*>.*?</\1>",
+                " ",
+                html_content,
+                flags=re.IGNORECASE | re.DOTALL,
+            )
+            with_line_breaks = re.sub(r"</(p|div|li|h1|h2|h3|h4|h5|h6|br)>", "\n", without_style)
+            without_tags = re.sub(r"<[^>]+>", " ", with_line_breaks)
+            unescaped = html.unescape(without_tags)
+            collapsed = re.sub(r"[ \t]+", " ", unescaped)
+            normalized = re.sub(r"\n{3,}", "\n\n", collapsed)
+            return normalized.strip()
+        except Exception as exc:
+            print(f"Error in GmailMailService._html_to_text: {exc}")
+            return ""
 
     def _extract_plain_text_body(self, payload: dict) -> str:
         """Decode the first text/plain body part from a Gmail payload tree."""

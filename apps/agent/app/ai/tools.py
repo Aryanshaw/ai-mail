@@ -13,11 +13,15 @@ class SearchToolFactory:
         mail_service: GmailMailService,
         settings: AISettings,
         tool_state: dict,
+        default_mailbox: str,
+        selected_mail_id: str | None,
     ):
         self.user_id = user_id
         self.mail_service = mail_service
         self.settings = settings
         self.tool_state = tool_state
+        self.default_mailbox = default_mailbox
+        self.selected_mail_id = selected_mail_id
 
     def create_tools(self) -> list:
         """Create LangChain tools used by SearchAgent for candidate retrieval."""
@@ -73,4 +77,41 @@ class SearchToolFactory:
                 print(f"Error in search_mail_candidates: {exc}")
                 raise
 
-        return [search_mail_candidates]
+        @tool("get_selected_email_detail")
+        async def get_selected_email_detail(
+            selected_mail_id: str = "",
+            mailbox: str = "inbox",
+        ) -> dict:
+            """Fetch currently open email detail and return AI-readable summarization content."""
+            try:
+                self.tool_state.setdefault("tools_called", []).append("get_selected_email_detail")
+                resolved_mail_id = selected_mail_id.strip() or (self.selected_mail_id or "")
+                if not resolved_mail_id:
+                    return {
+                        "ok": False,
+                        "reason": "No selected email id found in context",
+                    }
+
+                resolved_mailbox = mailbox.strip() or self.default_mailbox
+                normalized_mailbox = "sent" if resolved_mailbox == "sent" else "inbox"
+                detail = await self.mail_service.get_message_detail(self.user_id, resolved_mail_id)
+                content_text = self.mail_service.extract_ai_readable_content(detail)
+
+                payload = {
+                    "ok": True,
+                    "mailbox": normalized_mailbox,
+                    "id": detail.id,
+                    "sender": detail.sender,
+                    "to": detail.to,
+                    "subject": detail.subject,
+                    "snippet": detail.snippet,
+                    "dateLabel": detail.date_label,
+                    "content_text": content_text,
+                }
+                self.tool_state["selected_mail_detail"] = payload
+                return payload
+            except Exception as exc:
+                print(f"Error in get_selected_email_detail: {exc}")
+                raise
+
+        return [search_mail_candidates, get_selected_email_detail]
