@@ -6,8 +6,10 @@ GOOGLE_SCOPES = [
     "openid",
     "email",
     "profile",
+    "https://www.googleapis.com/auth/gmail.modify",
     "https://www.googleapis.com/auth/gmail.readonly",
     "https://www.googleapis.com/auth/gmail.send",
 ]
 
 PROVIDER_NAME = "google"
+GMAIL_API_BASE_URL = "https://gmail.googleapis.com/gmail/v1"

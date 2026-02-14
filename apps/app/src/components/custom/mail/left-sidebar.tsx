@@ -7,20 +7,26 @@ import Image from "next/image";
 interface LeftSidebarProps {
   activeNav: NavItemKey;
   onNavChange: (nav: NavItemKey) => void;
-  user: any;
+  user: {
+    first_name?: string;
+    last_name?: string;
+    avatar?: string | null;
+  } | null;
+  unreadCount: number | null;
   onLogout: () => void;
 }
 
 const navItems = [
-  { key: "inbox" as const, label: "Inbox", icon: Inbox, count: 12 },
-  { key: "sent" as const, label: "Sent", icon: SendHorizontal, count: null },
-  { key: "compose" as const, label: "Compose", icon: PenSquare, count: null },
-  { key: "archived" as const, label: "Archived", icon: Archive, count: null },
-  { key: "discover" as const, label: "Discover", icon: Compass, count: null },
+  { key: "inbox" as const, label: "Inbox", icon: Inbox },
+  { key: "sent" as const, label: "Sent", icon: SendHorizontal },
+  { key: "compose" as const, label: "Compose", icon: PenSquare },
+  { key: "archived" as const, label: "Archived", icon: Archive },
+  { key: "discover" as const, label: "Discover", icon: Compass },
 ];
 
-export function LeftSidebar({ activeNav, onNavChange, user, onLogout }: LeftSidebarProps) {
+export function LeftSidebar({ activeNav, onNavChange, user, unreadCount, onLogout }: LeftSidebarProps) {
   const fullName = `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || "AI Mail User";
+
   function getInitials(name: string) {
     return name
       .split(" ")
@@ -32,21 +38,21 @@ export function LeftSidebar({ activeNav, onNavChange, user, onLogout }: LeftSide
     <aside className="mail-glass-card mail-sidebar-separator flex h-full min-h-0 flex-col p-2 lg:w-[220px]">
       {/* App identity for instant orientation. */}
       <div className="mb-4 rounded-md border border-white/30 bg-white/35 p-4 dark:border-white/10 dark:bg-white/6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400">
           AI Mail
         </p>
-        <div className="flex gap-2 pt-2 pb-2 items-center">
+        <div className="flex items-center gap-2 pb-2 pt-2">
           {user?.avatar ? (
             <Image
               alt="avatar"
-              src={user?.avatar}
+              src={user.avatar}
               width={25}
               height={20}
               loading="eager"
               className="rounded-full"
             />
           ) : (
-            <div className="text-xs rounded-full backdrop-2xl bg-white dark:bg-black/20 p-2 border border-sm">
+            <div className="rounded-full border border-white/40 bg-white/70 p-2 text-xs dark:border-white/20 dark:bg-black/20">
               {getInitials(fullName)}
             </div>
           )}
@@ -63,6 +69,7 @@ export function LeftSidebar({ activeNav, onNavChange, user, onLogout }: LeftSide
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeNav === item.key;
+          const badgeCount = item.key === "inbox" ? unreadCount : null;
 
           return (
             <button
@@ -79,9 +86,9 @@ export function LeftSidebar({ activeNav, onNavChange, user, onLogout }: LeftSide
                 <Icon className="size-4" />
                 {item.label}
               </span>
-              {item.count ? (
-                <span className="rounded-full border border-white/45 bg-white/58 px-2 py-0.5 text-[11px] font-semibold dark:border-white/20 dark:bg-white/10">
-                  {item.count}
+              {typeof badgeCount === "number" ? (
+                <span className="rounded-full border border-white/45 bg-white/58 px-2 py-0.5 text-xs font-semibold dark:border-white/20 dark:bg-white/10">
+                  {badgeCount}
                 </span>
               ) : null}
             </button>
@@ -93,15 +100,15 @@ export function LeftSidebar({ activeNav, onNavChange, user, onLogout }: LeftSide
 
       {/* Footer utilities stay pinned to the bottom of the sidebar. */}
       <div className="mt-auto space-y-2">
-        <div className="rounded-md border border-black/10 dark:border-white/30 bg-white/35 p-2 px-4 dark:border-white/10 dark:bg-white/6 flex items-center justify-between w-full">
+        <div className="flex w-full items-center justify-between rounded-md border border-black/10 bg-white/35 p-2 px-4 dark:border-white/10 dark:bg-white/6">
           <ThemeToggle />
-          <p className="dark:text-gray-300 text-gray-800 text-sm">Theme toggle</p>
+          <p className="text-sm text-gray-800 dark:text-gray-300">Theme toggle</p>
         </div>
         <Button
           type="button"
           size="sm"
           onClick={onLogout}
-          className="w-full cursor-pointer p-4 rounded-md border border-black-10 dark:border-white/45 bg-white/62 text-zinc-800 hover:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
+          className="w-full cursor-pointer rounded-md border border-black/10 bg-white/62 p-4 text-zinc-800 hover:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-200 dark:hover:bg-white/15"
         >
           <LogOut className="size-4" />
           Logout

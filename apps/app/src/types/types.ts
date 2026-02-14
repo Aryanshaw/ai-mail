@@ -1,4 +1,5 @@
 export type NavItemKey = "inbox" | "sent" | "compose" | "archived" | "discover";
+export type MailboxType = "inbox" | "sent";
 
 export interface MailItem {
   id: string;
@@ -8,7 +9,16 @@ export interface MailItem {
   dateLabel: string;
   unread: boolean;
   category?: "Important" | "Team" | "Personal";
+  body?: string;
+}
+
+export interface MailDetail extends MailItem {
   body: string;
+}
+
+export interface MailListResponse {
+  items: MailItem[];
+  nextPageToken: string | null;
 }
 
 export interface ChatMessage {

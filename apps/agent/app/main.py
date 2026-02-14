@@ -7,6 +7,7 @@ from app.config.db import close_db, init_db
 from app.middleware.auth import auth_middleware
 from app.routes import health_router
 from app.routes.auth import router as auth_router
+from app.routes.mail import router as mail_router
 
 
 @asynccontextmanager
@@ -26,6 +27,7 @@ app.middleware("http")(auth_middleware)
 def init_routes(app_instance: FastAPI) -> None:
     app_instance.include_router(health_router)
     app_instance.include_router(auth_router)
+    app_instance.include_router(mail_router)
 
 
 if __name__ == "__main__":

@@ -3,16 +3,17 @@
 import { AIPanel } from "@/components/custom/mail/AiChat/ai-panel";
 import { LeftSidebar } from "@/components/custom/mail/left-sidebar";
 import { MainPanel } from "@/components/custom/mail/MailPanel/main-panel";
-import { chatMessages, mailItems } from "@/components/custom/mail/MailPanel/mock-data";
+import { chatMessages } from "@/components/custom/mail/MailPanel/mock-data";
+import { useMail } from "@/hooks/use-mail";
 import { NavItemKey } from "@/types/types";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 interface MailWorkspaceProps {
   user: {
     first_name?: string;
     last_name?: string;
-    avatar?: string;
+    avatar?: string | null;
   } | null;
   onLogout: () => void;
 }
@@ -23,18 +24,31 @@ const AI_PANEL_DEFAULT_WIDTH = 320;
 
 export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
   const [activeNav, setActiveNav] = useState<NavItemKey>("inbox");
-  const [selectedMailId, setSelectedMailId] = useState<string | null>(null);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantWidth, setAssistantWidth] = useState(AI_PANEL_DEFAULT_WIDTH);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const selectedMail = useMemo(() => {
-    if (!selectedMailId) {
-      return null;
-    }
-    return mailItems.find((mail) => mail.id === selectedMailId) ?? null;
-  }, [selectedMailId]);
+  const {
+    mailbox,
+    mails,
+    selectedMail,
+    unreadCount,
+    isInitialLoading,
+    isListLoading,
+    isDetailLoading,
+    isLoadingMore,
+    hasMore,
+    loadInitialInbox,
+    loadMailbox,
+    refreshCurrentMailbox,
+    loadMore,
+    openMail,
+  } = useMail();
+
+  useEffect(() => {
+    void loadInitialInbox();
+  }, [loadInitialInbox]);
 
   const handleAssistantResizeStart = (event: ReactPointerEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -79,8 +93,10 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
       return;
     }
 
-    if (nextNav === "inbox") {
-      setIsComposeOpen(false);
+    setIsComposeOpen(false);
+
+    if (nextNav === "inbox" || nextNav === "sent") {
+      void loadMailbox(nextNav);
     }
   }
 
@@ -96,19 +112,28 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
             activeNav={activeNav}
             onNavChange={handleNavChange}
             user={user}
+            unreadCount={mailbox === "inbox" ? unreadCount : null}
             onLogout={onLogout}
           />
 
           <div ref={contentRef} className="flex h-full min-h-0 min-w-0 flex-1 gap-1">
             <MainPanel
-              mails={mailItems}
+              mailbox={mailbox}
+              mails={mails}
               selectedMail={selectedMail}
-              onSelectMail={setSelectedMailId}
+              onSelectMail={(mailId) => void openMail(mailId)}
               isAssistantOpen={isAssistantOpen}
               onToggleAssistant={() => setIsAssistantOpen((prev) => !prev)}
               isComposeOpen={isComposeOpen}
               onOpenCompose={() => setIsComposeOpen(true)}
               onCloseCompose={() => setIsComposeOpen(false)}
+              isInitialLoading={isInitialLoading}
+              isListLoading={isListLoading}
+              isDetailLoading={isDetailLoading}
+              isLoadingMore={isLoadingMore}
+              hasMore={hasMore}
+              onLoadMore={() => void loadMore()}
+              onRefresh={() => void refreshCurrentMailbox()}
             />
             <AIPanel
               messages={chatMessages}

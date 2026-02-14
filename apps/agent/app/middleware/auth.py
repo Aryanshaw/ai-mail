@@ -7,7 +7,8 @@ PROTECTED_PATHS = {"/auth/me", "/auth/logout"}
 
 
 async def auth_middleware(request: Request, call_next):
-    if request.url.path in PROTECTED_PATHS:
+    path = request.url.path
+    if path in PROTECTED_PATHS or path.startswith("/mail"):
         session_token = request.headers.get("x-session-token")
         if not session_token:
             return JSONResponse(

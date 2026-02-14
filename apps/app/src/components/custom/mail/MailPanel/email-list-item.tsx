@@ -11,16 +11,16 @@ export function EmailListItem({ mail, isSelected, onSelect }: EmailListItemProps
     <button
       type="button"
       onClick={() => onSelect(mail.id)}
-      className={`mb-2 w-full cursor-pointer border-b border-black/10 dark:border-white/8 px-3 py-3 text-left transition-all duration-300 ${
+      className={`mb-2 w-full cursor-pointer border-b border-black/10 dark:border-white/8 px-2 py-3 text-left transition-all duration-300 ${
         isSelected
           ? "border-white/45 bg-white/62 shadow-sm dark:border-white/20 dark:bg-white/12 rounded-md"
           : "hover:border-white/30 hover:bg-white/42 dark:hover:border-white/14 dark:hover:bg-white/8"
       }`}
     >
-      {/* Top row prioritizes sender and recency for fast scanning. */}
-      <div className="mb-1 flex items-center justify-between gap-2">
+      {/* Top row: sender truncates on the left, date fixed on the right. */}
+      <div className="flex items-center justify-between gap-2 mb-1">
         <p
-          className={`text-sm ${
+          className={`min-w-0 flex-1 text-sm truncate ${
             mail.unread
               ? "font-semibold text-zinc-900 dark:text-zinc-100"
               : "font-medium text-zinc-700 dark:text-zinc-300"
@@ -28,7 +28,7 @@ export function EmailListItem({ mail, isSelected, onSelect }: EmailListItemProps
         >
           {mail.sender}
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">{mail.dateLabel}</p>
+        <p className="shrink-0 text-xs text-zinc-500 dark:text-zinc-400">{mail.dateLabel}</p>
       </div>
 
       {/* Subject */}
