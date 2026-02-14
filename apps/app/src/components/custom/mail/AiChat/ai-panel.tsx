@@ -36,6 +36,7 @@ export function AIPanel({
   onResizeStart,
 }: AIPanelProps) {
   const messageListRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -50,6 +51,20 @@ export function AIPanel({
       behavior: "smooth",
     });
   }, [isOpen, isSending, messages]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    const textareaElement = textareaRef.current;
+    if (!textareaElement) {
+      return;
+    }
+    textareaElement.style.height = "auto";
+    const nextHeight = Math.min(textareaElement.scrollHeight, 220);
+    textareaElement.style.height = `${nextHeight}px`;
+    textareaElement.style.overflowY = textareaElement.scrollHeight > 220 ? "auto" : "hidden";
+  }, [inputValue, isOpen]);
 
   return (
     <aside
@@ -123,8 +138,9 @@ export function AIPanel({
 
           {/* Bottom chat bar */}
           <div className="rounded-md border border-white/30 bg-white/35 p-3 dark:border-white/12 dark:bg-white/6">
-            <div className="relative rounded-lg border border-white/40 bg-white/70 dark:border-white/20 dark:bg-white/10">
+            <div className="rounded-lg border border-white/40 bg-white/70 dark:border-white/20 dark:bg-white/10">
               <textarea
+                ref={textareaRef}
                 placeholder="Ask about this thread..."
                 value={inputValue}
                 disabled={isSending}
@@ -136,24 +152,22 @@ export function AIPanel({
                   }
                 }}
                 rows={2}
-                className="min-h-14 w-full resize-none rounded-lg bg-transparent px-2 py-4 pb-10 text-xs text-zinc-900 outline-none transition-all placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 dark:text-zinc-100 dark:placeholder:text-zinc-400"
+                className="min-h-10 w-full resize-none bg-transparent px-3 py-4 text-xs text-zinc-900 outline-none transition-all placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 dark:text-zinc-100 dark:placeholder:text-zinc-400"
               />
 
-              <div className="pointer-events-none absolute inset-x-2 bottom-2 flex items-center justify-between">
-                <div className="pointer-events-auto">
-                  <ModelSelectionSheet
-                    value={selectedModel}
-                    onChange={onSelectModel}
-                    disabled={isSending}
-                  />
-                </div>
+              <div className="flex items-center justify-between  px-2 py-1">
+                <ModelSelectionSheet
+                  value={selectedModel}
+                  onChange={onSelectModel}
+                  disabled={isSending}
+                />
 
                 <Button
                   type="button"
                   size="sm"
                   onClick={onSend}
                   disabled={isSending}
-                  className="mail-send-button pointer-events-auto cursor-pointer rounded-md px-2 disabled:cursor-not-allowed"
+                  className="mail-send-button cursor-pointer rounded-md px-2 disabled:cursor-not-allowed"
                 >
                   {isSending ? (
                     <Loader2 className="size-4 animate-spin" />

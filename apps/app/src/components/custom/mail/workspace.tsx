@@ -18,9 +18,9 @@ interface MailWorkspaceProps {
   onLogout: () => void;
 }
 
-const AI_PANEL_MIN_WIDTH = 280;
+const AI_PANEL_MIN_WIDTH = 250;
 const AI_PANEL_MAX_WIDTH = 520;
-const AI_PANEL_DEFAULT_WIDTH = 320;
+const AI_PANEL_DEFAULT_WIDTH = 380;
 
 export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
   const [activeNav, setActiveNav] = useState<NavItemKey>("inbox");
@@ -65,7 +65,8 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
       }
     ) => {
       if (action.type === "OPEN_EMAIL") {
-        const messageId = typeof action.payload?.message_id === "string" ? action.payload.message_id : null;
+        const messageId =
+          typeof action.payload?.message_id === "string" ? action.payload.message_id : null;
         if (messageId) {
           await openMail(messageId);
         }
@@ -84,7 +85,11 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
     [applyAiResults, clearAiResults, openMail]
   );
 
-  const { messages, isLoading: isAssistantLoading, sendMessage } = useAIAssistant({
+  const {
+    messages,
+    isLoading: isAssistantLoading,
+    sendMessage,
+  } = useAIAssistant({
     model: selectedModel,
     onAction: handleAssistantAction,
   });
@@ -194,7 +199,13 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
               isLoadingMore={isLoadingMore}
               hasMore={hasMore}
               isSendingMail={isSendingMail}
-              listTitle={isAiResultsActive ? "AI Search Results" : mailbox === "sent" ? "Sent Mail" : "Priority Inbox"}
+              listTitle={
+                isAiResultsActive
+                  ? "AI Search Results"
+                  : mailbox === "sent"
+                    ? "Sent Mail"
+                    : "Priority Inbox"
+              }
               isAiResultsActive={isAiResultsActive}
               onClearAiResults={clearAiResults}
               onLoadMore={() => void loadMore()}
