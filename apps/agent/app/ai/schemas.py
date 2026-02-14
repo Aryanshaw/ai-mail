@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 from app.mail.schemas import MailListItem
@@ -12,7 +14,7 @@ class AIContext(BaseModel):
 
 class AIChatRequest(BaseModel):
     message: str
-    model: str = "auto"
+    model: Literal["gemini", "groq"]
     context: AIContext
 
 
@@ -39,7 +41,7 @@ class AIWsChatRequestPayload(BaseModel):
     chat_id: str = Field(alias="chatId")
     conversation_id: str | None = Field(default=None, alias="conversationId")
     message: str
-    model: str = "auto"
+    model: Literal["gemini", "groq"]
     context: AIContext
 
 

@@ -30,13 +30,13 @@ class SearchAgent:
         message: str,
         context: dict[str, Any],
         memory_messages: list[dict[str, str]] | None = None,
-        model_selector: str = "auto",
+        model_selector: str = "",
     ) -> AIChatResponse:
         """Run SearchAgent with tools and return source-bound UI actions/results."""
         try:
-            primary_provider = self._resolve_primary_provider(model_selector)
+            provider = self._resolve_provider(model_selector)
             response = await self._invoke_with_provider(
-                provider=primary_provider,
+                provider=provider,
                 user_id=user_id,
                 message=message,
                 context=context,
@@ -44,35 +44,22 @@ class SearchAgent:
             )
             return response
         except Exception as exc:
-            print(f"Error in SearchAgent.search.primary: {exc}")
-            if model_selector == "groq":
-                raise
+            print(f"Error in SearchAgent.search: {exc}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="AI search failed",
+            ) from exc
 
-            fallback_provider = "groq"
-            try:
-                return await self._invoke_with_provider(
-                    provider=fallback_provider,
-                    user_id=user_id,
-                    message=message,
-                    context=context,
-                    memory_messages=memory_messages,
-                )
-            except Exception as fallback_exc:
-                print(f"Error in SearchAgent.search.fallback: {fallback_exc}")
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="AI search failed",
-                ) from fallback_exc
-
-    def _resolve_primary_provider(self, model_selector: str) -> str:
-        """Resolve which provider should be used first for agent execution."""
+    def _resolve_provider(self, model_selector: str) -> str:
+        """Resolve explicit frontend-selected provider for agent execution."""
         if model_selector == "groq":
             return "groq"
         if model_selector == "gemini":
             return "gemini"
-        if self.settings.default_model_selector == "groq":
-            return "groq"
-        return "gemini"
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Unsupported model selector",
+        )
 
     async def _invoke_with_provider(
         self,

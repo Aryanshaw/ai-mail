@@ -5,7 +5,7 @@ import { LeftSidebar } from "@/components/custom/mail/left-sidebar";
 import { MainPanel } from "@/components/custom/mail/MailPanel/main-panel";
 import { useAIAssistant } from "@/hooks/use-ai-assistant";
 import { useMail } from "@/hooks/use-mail";
-import { AIUiAction, MailItem, NavItemKey } from "@/types/types";
+import { AIModelSelector, AIUiAction, MailItem, NavItemKey } from "@/types/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
@@ -28,6 +28,7 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantWidth, setAssistantWidth] = useState(AI_PANEL_DEFAULT_WIDTH);
   const [aiInputValue, setAiInputValue] = useState("");
+  const [selectedModel, setSelectedModel] = useState<AIModelSelector>("gemini");
   const contentRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -84,7 +85,7 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
   );
 
   const { messages, isLoading: isAssistantLoading, sendMessage } = useAIAssistant({
-    model: "auto",
+    model: selectedModel,
     onAction: handleAssistantAction,
   });
 
@@ -206,6 +207,8 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
               isSending={isAssistantLoading}
               isOpen={isAssistantOpen}
               width={assistantWidth}
+              selectedModel={selectedModel}
+              onSelectModel={setSelectedModel}
               onInputChange={setAiInputValue}
               onSend={() => void handleAssistantSubmit()}
               onInputEnter={() => void handleAssistantSubmit()}

@@ -63,7 +63,7 @@ export interface ChatMessage {
   status?: "streaming" | "completed" | "error";
 }
 
-export type AIModelSelector = "auto" | "gemini" | "groq";
+export type AIModelSelector = "gemini" | "groq";
 
 export interface WsEnvelope<T = unknown> {
   type: string;

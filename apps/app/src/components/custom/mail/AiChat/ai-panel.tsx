@@ -1,9 +1,10 @@
-import { ChatMessage } from "@/types/types";
+import { AIModelSelector, ChatMessage } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, GripVertical, Loader2, SendHorizontal, Sparkles } from "lucide-react";
 import { useEffect, useRef } from "react";
 import type { PointerEvent } from "react";
 import AIAssistantHeader from "./ai-assistant-header";
+import { ModelSelectionSheet } from "./model-selection-sheet";
 
 interface AIPanelProps {
   messages: ChatMessage[];
@@ -11,7 +12,9 @@ interface AIPanelProps {
   isSending: boolean;
   isOpen: boolean;
   width: number;
+  selectedModel: AIModelSelector;
   onToggle: () => void;
+  onSelectModel: (value: AIModelSelector) => void;
   onInputChange: (value: string) => void;
   onSend: () => void;
   onInputEnter: () => void;
@@ -24,7 +27,9 @@ export function AIPanel({
   isSending,
   isOpen,
   width,
+  selectedModel,
   onToggle,
+  onSelectModel,
   onInputChange,
   onSend,
   onInputEnter,
@@ -118,10 +123,7 @@ export function AIPanel({
 
           {/* Bottom chat bar */}
           <div className="rounded-md border border-white/30 bg-white/35 p-3 dark:border-white/12 dark:bg-white/6">
-            <p className="mb-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
-              Ask AI for summary or quick draft
-            </p>
-            <div className="flex gap-2 items-end">
+            <div className="relative rounded-lg border border-white/40 bg-white/70 dark:border-white/20 dark:bg-white/10">
               <textarea
                 placeholder="Ask about this thread..."
                 value={inputValue}
@@ -133,22 +135,33 @@ export function AIPanel({
                     onInputEnter();
                   }
                 }}
-                rows={3}
-                className="min-h-20 flex-1 resize-none rounded-lg border border-white/40 bg-white/70 px-2 py-2 text-xs text-zinc-900 outline-none transition-all placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 focus:border-white focus:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:border-white/30 dark:focus:bg-white/15"
+                rows={2}
+                className="min-h-14 w-full resize-none rounded-lg bg-transparent px-2 py-4 pb-10 text-xs text-zinc-900 outline-none transition-all placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 dark:text-zinc-100 dark:placeholder:text-zinc-400"
               />
-              <Button
-                type="button"
-                size="sm"
-                onClick={onSend}
-                disabled={isSending}
-                className="mail-send-button cursor-pointer rounded-md px-2 disabled:cursor-not-allowed"
-              >
-                {isSending ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <SendHorizontal className="size-4" />
-                )}
-              </Button>
+
+              <div className="pointer-events-none absolute inset-x-2 bottom-2 flex items-center justify-between">
+                <div className="pointer-events-auto">
+                  <ModelSelectionSheet
+                    value={selectedModel}
+                    onChange={onSelectModel}
+                    disabled={isSending}
+                  />
+                </div>
+
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={onSend}
+                  disabled={isSending}
+                  className="mail-send-button pointer-events-auto cursor-pointer rounded-md px-2 disabled:cursor-not-allowed"
+                >
+                  {isSending ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <SendHorizontal className="size-4" />
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
