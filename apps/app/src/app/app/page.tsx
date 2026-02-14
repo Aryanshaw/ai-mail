@@ -3,6 +3,7 @@
 import LiquidWave from "@/components/backgrounds/new-liquid";
 import { MailWorkspace } from "@/components/custom/mail/workspace";
 import { useAuth } from "@/hooks/use-auth";
+import { WebSocketProvider } from "@/providers/websocket-provider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -32,7 +33,9 @@ export default function AppHomePage() {
       />
 
       <div className="absolute inset-0 z-20">
-        <MailWorkspace user={user} onLogout={() => void logout().then(() => router.replace("/"))} />
+        <WebSocketProvider>
+          <MailWorkspace user={user} onLogout={() => void logout().then(() => router.replace("/"))} />
+        </WebSocketProvider>
       </div>
     </main>
   );

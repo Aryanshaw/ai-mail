@@ -8,6 +8,8 @@ from app.middleware.auth import auth_middleware
 from app.routes import health_router
 from app.routes.auth import router as auth_router
 from app.routes.mail import router as mail_router
+from app.routes.ws import router as ws_router
+from app.routes.ws_auth import router as ws_auth_router
 
 
 @asynccontextmanager
@@ -28,6 +30,8 @@ def init_routes(app_instance: FastAPI) -> None:
     app_instance.include_router(health_router)
     app_instance.include_router(auth_router)
     app_instance.include_router(mail_router)
+    app_instance.include_router(ws_auth_router)
+    app_instance.include_router(ws_router)
 
 
 if __name__ == "__main__":

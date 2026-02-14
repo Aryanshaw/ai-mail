@@ -3,12 +3,13 @@ from fastapi.responses import JSONResponse
 
 from app.auth.service import get_current_user
 
-PROTECTED_PATHS = {"/auth/me", "/auth/logout"}
+PROTECTED_PATHS = {"/auth/me", "/auth/logout", "/ws/token"}
+PROTECTED_PREFIXES = ("/mail",)
 
 
 async def auth_middleware(request: Request, call_next):
     path = request.url.path
-    if path in PROTECTED_PATHS or path.startswith("/mail"):
+    if path in PROTECTED_PATHS or path.startswith(PROTECTED_PREFIXES):
         session_token = request.headers.get("x-session-token")
         if not session_token:
             return JSONResponse(
