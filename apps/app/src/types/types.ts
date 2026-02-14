@@ -60,4 +60,47 @@ export interface ChatMessage {
   id: string;
   role: "assistant" | "user";
   text: string;
+  status?: "streaming" | "completed" | "error";
+}
+
+export type AIModelSelector = "auto" | "gemini" | "groq";
+
+export interface WsEnvelope<T = unknown> {
+  type: string;
+  eventId?: string;
+  ts?: string;
+  payload: T;
+}
+
+export interface ChatRequestPayload {
+  chatId: string;
+  message: string;
+  model: AIModelSelector;
+  context: AIChatRequestContext;
+}
+
+export interface ChatStartPayload {
+  chatId: string;
+  userMessage: string;
+  model: AIModelSelector;
+}
+
+export interface ChatDeltaPayload {
+  chatId: string;
+  delta: string;
+}
+
+export interface ChatActionPayload {
+  chatId: string;
+  action: AIUiAction;
+  results?: MailItem[];
+}
+
+export interface ChatCompletedPayload extends AIChatResponse {
+  chatId: string;
+}
+
+export interface ChatErrorPayload {
+  chatId?: string | null;
+  message: string;
 }

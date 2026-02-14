@@ -5,8 +5,8 @@ import { LeftSidebar } from "@/components/custom/mail/left-sidebar";
 import { MainPanel } from "@/components/custom/mail/MailPanel/main-panel";
 import { useAIAssistant } from "@/hooks/use-ai-assistant";
 import { useMail } from "@/hooks/use-mail";
-import { NavItemKey } from "@/types/types";
-import { useEffect, useRef, useState } from "react";
+import { AIUiAction, MailItem, NavItemKey } from "@/types/types";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 interface MailWorkspaceProps {
@@ -29,7 +29,6 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
   const [assistantWidth, setAssistantWidth] = useState(AI_PANEL_DEFAULT_WIDTH);
   const [aiInputValue, setAiInputValue] = useState("");
   const contentRef = useRef<HTMLDivElement>(null);
-  const { messages, isLoading: isAssistantLoading, sendMessage } = useAIAssistant({ model: "auto" });
 
   const {
     mailbox,
@@ -54,6 +53,40 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
     applyAiResults,
     clearAiResults,
   } = useMail();
+
+  const handleAssistantAction = useCallback(
+    async (
+      action: AIUiAction,
+      payload: {
+        chatId: string;
+        prompt: string;
+        results: MailItem[] | undefined;
+      }
+    ) => {
+      if (action.type === "OPEN_EMAIL") {
+        const messageId = typeof action.payload?.message_id === "string" ? action.payload.message_id : null;
+        if (messageId) {
+          await openMail(messageId);
+        }
+        return;
+      }
+
+      if (action.type === "CLEAR_AI_RESULTS") {
+        clearAiResults();
+        return;
+      }
+
+      if (action.type === "SHOW_SEARCH_RESULTS") {
+        applyAiResults(payload.results || [], payload.prompt);
+      }
+    },
+    [applyAiResults, clearAiResults, openMail]
+  );
+
+  const { messages, isLoading: isAssistantLoading, sendMessage } = useAIAssistant({
+    model: "auto",
+    onAction: handleAssistantAction,
+  });
 
   useEffect(() => {
     void loadInitialInbox();
@@ -116,36 +149,13 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
     }
 
     try {
-      const response = await sendMessage(trimmedPrompt, {
+      setAiInputValue("");
+      await sendMessage(trimmedPrompt, {
         activeMailbox: mailbox,
         selectedMailId,
         currentFilters: isAiResultsActive ? { query: aiResultQuery } : {},
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
-      setAiInputValue("");
-
-      if (!response) {
-        return;
-      }
-
-      for (const action of response.uiActions) {
-        if (action.type === "OPEN_EMAIL") {
-          const messageId = typeof action.payload?.message_id === "string" ? action.payload.message_id : null;
-          if (messageId) {
-            await openMail(messageId);
-          }
-          continue;
-        }
-
-        if (action.type === "CLEAR_AI_RESULTS") {
-          clearAiResults();
-          continue;
-        }
-
-        if (action.type === "SHOW_SEARCH_RESULTS") {
-          applyAiResults(response.results, trimmedPrompt);
-        }
-      }
     } catch (error) {
       console.error("Error in MailWorkspace.handleAssistantSubmit:", error);
     }

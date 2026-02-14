@@ -1,11 +1,7 @@
 import { ChatMessage } from "@/types/types";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  GripVertical,
-  SendHorizontal,
-  Sparkles,
-} from "lucide-react";
+import { ChevronLeft, GripVertical, Loader2, SendHorizontal, Sparkles } from "lucide-react";
+import { useEffect, useRef } from "react";
 import type { PointerEvent } from "react";
 import AIAssistantHeader from "./ai-assistant-header";
 
@@ -34,6 +30,22 @@ export function AIPanel({
   onInputEnter,
   onResizeStart,
 }: AIPanelProps) {
+  const messageListRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    const container = messageListRef.current;
+    if (!container) {
+      return;
+    }
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [isOpen, isSending, messages]);
+
   return (
     <aside
       className={`group/ai mail-ai-panel-separator mail-glass-card relative h-full min-h-0 shrink-0 overflow-hidden transition-[width] duration-300 ease-out ${
@@ -74,7 +86,10 @@ export function AIPanel({
           <AIAssistantHeader onToggle={onToggle} />
 
           {/* Message list */}
-          <div className="mail-glass-inner mb-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto rounded-md p-2">
+          <div
+            ref={messageListRef}
+            className="mail-glass-inner mb-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto rounded-md p-2"
+          >
             {messages.map((message) => {
               const isAssistant = message.role === "assistant";
 
@@ -87,7 +102,15 @@ export function AIPanel({
                       : "self-end border-white/48 bg-white/75 text-zinc-900 dark:border-white/20 dark:bg-white/15 dark:text-zinc-100"
                   }`}
                 >
-                  {message.text}
+                  {message.status === "streaming" && !message.text ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="size-1.5 animate-pulse rounded-full bg-zinc-500 dark:bg-zinc-300" />
+                      <span className="size-1.5 animate-pulse rounded-full bg-zinc-500 dark:bg-zinc-300 [animation-delay:140ms]" />
+                      <span className="size-1.5 animate-pulse rounded-full bg-zinc-500 dark:bg-zinc-300 [animation-delay:280ms]" />
+                    </span>
+                  ) : (
+                    message.text
+                  )}
                 </div>
               );
             })}
@@ -98,28 +121,33 @@ export function AIPanel({
             <p className="mb-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
               Ask AI for summary or quick draft
             </p>
-            <div className="flex gap-2">
-              <input
-                type="text"
+            <div className="flex gap-2 items-end">
+              <textarea
                 placeholder="Ask about this thread..."
                 value={inputValue}
+                disabled={isSending}
                 onChange={(event) => onInputChange(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter") {
+                  if (event.key === "Enter" && !event.shiftKey) {
                     event.preventDefault();
                     onInputEnter();
                   }
                 }}
-                className="h-9 flex-1 rounded-lg border border-white/40 bg-white/70 px-2 text-sm text-zinc-900 outline-none transition-all placeholder:text-zinc-500 focus:border-white focus:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:border-white/30 dark:focus:bg-white/15"
+                rows={3}
+                className="min-h-20 flex-1 resize-none rounded-lg border border-white/40 bg-white/70 px-2 py-2 text-sm text-zinc-900 outline-none transition-all placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 focus:border-white focus:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:border-white/30 dark:focus:bg-white/15"
               />
               <Button
                 type="button"
                 size="sm"
                 onClick={onSend}
                 disabled={isSending}
-                className="mail-send-button cursor-pointer rounded-md px-2"
+                className="mail-send-button cursor-pointer rounded-md px-2 disabled:cursor-not-allowed"
               >
-                <SendHorizontal className="size-4" />
+                {isSending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <SendHorizontal className="size-4" />
+                )}
               </Button>
             </div>
           </div>

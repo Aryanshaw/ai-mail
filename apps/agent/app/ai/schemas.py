@@ -33,3 +33,16 @@ class AIChatResponse(BaseModel):
     ui_actions: list[AIUiAction] = Field(default_factory=list, alias="uiActions")
     results: list[MailListItem] = Field(default_factory=list)
     trace: AITrace
+
+
+class AIWsChatRequestPayload(BaseModel):
+    chat_id: str = Field(alias="chatId")
+    message: str
+    model: str = "auto"
+    context: AIContext
+
+
+class WsClientEvent(BaseModel):
+    type: str
+    event_id: str | None = Field(default=None, alias="eventId")
+    payload: dict = Field(default_factory=dict)
