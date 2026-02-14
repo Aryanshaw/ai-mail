@@ -3,7 +3,7 @@
 import { AIPanel } from "@/components/custom/mail/AiChat/ai-panel";
 import { LeftSidebar } from "@/components/custom/mail/left-sidebar";
 import { MainPanel } from "@/components/custom/mail/MailPanel/main-panel";
-import { chatMessages } from "@/components/custom/mail/MailPanel/mock-data";
+import { useAIAssistant } from "@/hooks/use-ai-assistant";
 import { useMail } from "@/hooks/use-mail";
 import { NavItemKey } from "@/types/types";
 import { useEffect, useRef, useState } from "react";
@@ -27,12 +27,15 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantWidth, setAssistantWidth] = useState(AI_PANEL_DEFAULT_WIDTH);
+  const [aiInputValue, setAiInputValue] = useState("");
   const contentRef = useRef<HTMLDivElement>(null);
+  const { messages, isLoading: isAssistantLoading, sendMessage } = useAIAssistant({ model: "auto" });
 
   const {
     mailbox,
-    mails,
+    displayedMails,
     selectedMail,
+    selectedMailId,
     unreadCount,
     isInitialLoading,
     isListLoading,
@@ -46,6 +49,10 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
     openMail,
     sendComposeMail,
     isSendingMail,
+    isAiResultsActive,
+    aiResultQuery,
+    applyAiResults,
+    clearAiResults,
   } = useMail();
 
   useEffect(() => {
@@ -102,6 +109,48 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
     }
   }
 
+  async function handleAssistantSubmit() {
+    const trimmedPrompt = aiInputValue.trim();
+    if (!trimmedPrompt || isAssistantLoading) {
+      return;
+    }
+
+    try {
+      const response = await sendMessage(trimmedPrompt, {
+        activeMailbox: mailbox,
+        selectedMailId,
+        currentFilters: isAiResultsActive ? { query: aiResultQuery } : {},
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
+      setAiInputValue("");
+
+      if (!response) {
+        return;
+      }
+
+      for (const action of response.uiActions) {
+        if (action.type === "OPEN_EMAIL") {
+          const messageId = typeof action.payload?.message_id === "string" ? action.payload.message_id : null;
+          if (messageId) {
+            await openMail(messageId);
+          }
+          continue;
+        }
+
+        if (action.type === "CLEAR_AI_RESULTS") {
+          clearAiResults();
+          continue;
+        }
+
+        if (action.type === "SHOW_SEARCH_RESULTS") {
+          applyAiResults(response.results, trimmedPrompt);
+        }
+      }
+    } catch (error) {
+      console.error("Error in MailWorkspace.handleAssistantSubmit:", error);
+    }
+  }
+
   return (
     <div className="relative h-full w-full overflow-hidden mail-app-colors backdrop-blur-2xl">
       <div className="pointer-events-none absolute inset-0 z-10 mail-app-overlay" />
@@ -120,8 +169,7 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
 
           <div ref={contentRef} className="flex h-full min-h-0 min-w-0 flex-1 gap-1">
             <MainPanel
-              mailbox={mailbox}
-              mails={mails}
+              mails={displayedMails}
               selectedMail={selectedMail}
               onSelectMail={(mailId) => void openMail(mailId)}
               isAssistantOpen={isAssistantOpen}
@@ -135,14 +183,22 @@ export function MailWorkspace({ user, onLogout }: MailWorkspaceProps) {
               isLoadingMore={isLoadingMore}
               hasMore={hasMore}
               isSendingMail={isSendingMail}
+              listTitle={isAiResultsActive ? "AI Search Results" : mailbox === "sent" ? "Sent Mail" : "Priority Inbox"}
+              isAiResultsActive={isAiResultsActive}
+              onClearAiResults={clearAiResults}
               onLoadMore={() => void loadMore()}
               onRefresh={() => void refreshCurrentMailbox()}
               onSendComposeMail={(draft) => sendComposeMail(draft)}
             />
             <AIPanel
-              messages={chatMessages}
+              messages={messages}
+              inputValue={aiInputValue}
+              isSending={isAssistantLoading}
               isOpen={isAssistantOpen}
               width={assistantWidth}
+              onInputChange={setAiInputValue}
+              onSend={() => void handleAssistantSubmit()}
+              onInputEnter={() => void handleAssistantSubmit()}
               onResizeStart={handleAssistantResizeStart}
               onToggle={toggleChatPanel}
             />

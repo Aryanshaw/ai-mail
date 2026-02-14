@@ -11,13 +11,29 @@ import AIAssistantHeader from "./ai-assistant-header";
 
 interface AIPanelProps {
   messages: ChatMessage[];
+  inputValue: string;
+  isSending: boolean;
   isOpen: boolean;
   width: number;
   onToggle: () => void;
+  onInputChange: (value: string) => void;
+  onSend: () => void;
+  onInputEnter: () => void;
   onResizeStart: (event: PointerEvent<HTMLDivElement>) => void;
 }
 
-export function AIPanel({ messages, isOpen, width, onToggle, onResizeStart }: AIPanelProps) {
+export function AIPanel({
+  messages,
+  inputValue,
+  isSending,
+  isOpen,
+  width,
+  onToggle,
+  onInputChange,
+  onSend,
+  onInputEnter,
+  onResizeStart,
+}: AIPanelProps) {
   return (
     <aside
       className={`group/ai mail-ai-panel-separator mail-glass-card relative h-full min-h-0 shrink-0 overflow-hidden transition-[width] duration-300 ease-out ${
@@ -86,11 +102,21 @@ export function AIPanel({ messages, isOpen, width, onToggle, onResizeStart }: AI
               <input
                 type="text"
                 placeholder="Ask about this thread..."
+                value={inputValue}
+                onChange={(event) => onInputChange(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    onInputEnter();
+                  }
+                }}
                 className="h-9 flex-1 rounded-lg border border-white/40 bg-white/70 px-2 text-sm text-zinc-900 outline-none transition-all placeholder:text-zinc-500 focus:border-white focus:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:border-white/30 dark:focus:bg-white/15"
               />
               <Button
                 type="button"
                 size="sm"
+                onClick={onSend}
+                disabled={isSending}
                 className="mail-send-button cursor-pointer rounded-md px-2"
               >
                 <SendHorizontal className="size-4" />

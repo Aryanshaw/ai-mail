@@ -9,8 +9,9 @@ import { RefreshCcw } from "lucide-react";
 import ComposeHeader from "./compose-header";
 
 interface MainPanelProps {
-  mailbox: "inbox" | "sent";
   mails: MailItem[];
+  listTitle: string;
+  isAiResultsActive: boolean;
   selectedMail: MailItem | null;
   onSelectMail: (mailId: string) => void;
   isAssistantOpen: boolean;
@@ -27,11 +28,13 @@ interface MainPanelProps {
   onLoadMore: () => void;
   onRefresh: () => void;
   onSendComposeMail: (draft: SendMailPayload) => Promise<void>;
+  onClearAiResults: () => void;
 }
 
 export function MainPanel({
-  mailbox,
   mails,
+  listTitle,
+  isAiResultsActive,
   selectedMail,
   onSelectMail,
   isAssistantOpen,
@@ -48,6 +51,7 @@ export function MainPanel({
   onLoadMore,
   onRefresh,
   onSendComposeMail,
+  onClearAiResults,
 }: MainPanelProps) {
   async function handleSendComposeMail(draft: {
     to: string;
@@ -82,16 +86,29 @@ export function MainPanel({
         {!isComposeOpen ? (
           <div className="flex min-h-0 max-w-xs flex-col">
             <div className="mail-panel-border flex items-center justify-between border-b px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-600 dark:text-zinc-400">
-                {mailbox === "sent" ? "Sent Mail" : "Priority Inbox"}
-              </p>
-              <button
-                className="cursor-pointer rounded-md bg-black/10 p-2 dark:bg-white/10"
-                onClick={onRefresh}
-                type="button"
-              >
-                <RefreshCcw size={14} className={isListLoading ? "animate-spin" : ""} />
-              </button>
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-600 dark:text-zinc-400">
+                  {listTitle}
+                </p>
+                {isAiResultsActive ? (
+                  <button
+                    type="button"
+                    onClick={onClearAiResults}
+                    className="cursor-pointer rounded-md border border-white/40 bg-white/60 px-2 py-1 text-xs font-medium text-zinc-700 dark:border-white/20 dark:bg-white/10 dark:text-zinc-300"
+                  >
+                    Clear
+                  </button>
+                ) : null}
+              </div>
+              {!isAiResultsActive ? (
+                <button
+                  className="cursor-pointer rounded-md bg-black/10 p-2 dark:bg-white/10"
+                  onClick={onRefresh}
+                  type="button"
+                >
+                  <RefreshCcw size={14} className={isListLoading ? "animate-spin" : ""} />
+                </button>
+              ) : null}
             </div>
 
             <div className="flex-1 overflow-y-auto">
@@ -119,7 +136,7 @@ export function MainPanel({
                   </div>
                   <MailListFooter
                     isLoadingMore={isLoadingMore}
-                    hasMore={hasMore}
+                    hasMore={!isAiResultsActive && hasMore}
                     onLoadMore={onLoadMore}
                   />
                 </>

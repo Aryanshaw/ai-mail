@@ -213,6 +213,57 @@ class GmailMailService:
                 detail="Failed to list mail messages",
             ) from exc
 
+    async def search_messages(
+        self,
+        user_id: str,
+        mailbox: str,
+        query: str,
+        page_size: int,
+        page_token: str | None = None,
+    ) -> MailListResponse:
+        """Search mailbox messages using Gmail query syntax and return hydrated list items."""
+        try:
+            access_token = await self.token_service.get_valid_access_token(user_id)
+            headers = {"Authorization": f"Bearer {access_token}"}
+
+            params: dict[str, str | int] = {
+                "maxResults": page_size,
+                "q": query,
+            }
+            if page_token:
+                params["pageToken"] = page_token
+            params["labelIds"] = "SENT" if mailbox == "sent" else "INBOX"
+
+            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=20)) as client:
+                async with client.get(
+                    f"{GMAIL_API_BASE_URL}/users/me/messages",
+                    headers=headers,
+                    params=params,
+                ) as response:
+                    payload = await response.json(content_type=None)
+                    if response.status >= 400:
+                        detail = payload.get("error", {}).get(
+                            "message", "Failed to search Gmail messages"
+                        )
+                        raise HTTPException(
+                            status_code=status.HTTP_502_BAD_GATEWAY,
+                            detail=detail,
+                        )
+
+                messages = payload.get("messages", [])
+                items = await self._fetch_list_items(client, headers, messages)
+
+            return MailListResponse(items=items, nextPageToken=payload.get("nextPageToken"))
+        except HTTPException as exc:
+            print(f"Error in GmailMailService.search_messages: {exc}")
+            raise
+        except Exception as exc:
+            print(f"Error in GmailMailService.search_messages: {exc}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to search mail messages",
+            ) from exc
+
     async def get_message_detail(self, user_id: str, message_id: str) -> MailDetailResponse:
         """Fetch a single Gmail message with full body content for the detail panel."""
         try:

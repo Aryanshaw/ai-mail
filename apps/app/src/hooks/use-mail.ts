@@ -17,6 +17,8 @@ export function useMail() {
   const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isSendingMail, setIsSendingMail] = useState(false);
+  const [aiResultItems, setAiResultItems] = useState<MailItem[] | null>(null);
+  const [aiResultQuery, setAiResultQuery] = useState<string | null>(null);
 
   const fetchList = useCallback(
     async (targetMailbox: MailboxType, pageToken?: string | null, append = false) => {
@@ -30,6 +32,8 @@ export function useMail() {
         if (!append) {
           setSelectedMailId(null);
           setSelectedMailDetail(null);
+          setAiResultItems(null);
+          setAiResultQuery(null);
         }
       } catch (error) {
         console.error("Error in useMail.fetchList:", error);
@@ -38,6 +42,8 @@ export function useMail() {
           setSelectedMailId(null);
           setSelectedMailDetail(null);
           setNextPageToken(null);
+          setAiResultItems(null);
+          setAiResultQuery(null);
         }
       }
     },
@@ -78,6 +84,8 @@ export function useMail() {
       setIsListLoading(true);
       setSelectedMailId(null);
       setSelectedMailDetail(null);
+      setAiResultItems(null);
+      setAiResultQuery(null);
       await fetchList(mailbox, null, false);
     } catch (error) {
       console.error("Error in useMail.refreshCurrentMailbox:", error);
@@ -149,6 +157,8 @@ export function useMail() {
   }, [mails, selectedMailDetail, selectedMailId]);
 
   const unreadCount = useMemo(() => mails.filter((mail) => mail.unread).length, [mails]);
+  const displayedMails = useMemo(() => aiResultItems ?? mails, [aiResultItems, mails]);
+  const isAiResultsActive = useMemo(() => aiResultItems !== null, [aiResultItems]);
 
   const sendComposeMail = useCallback(
     async (payload: SendMailPayload) => {
@@ -166,9 +176,30 @@ export function useMail() {
     [refreshCurrentMailbox]
   );
 
+  const applyAiResults = useCallback((items: MailItem[], query: string) => {
+    try {
+      setAiResultItems(items);
+      setAiResultQuery(query);
+      setSelectedMailId(null);
+      setSelectedMailDetail(null);
+    } catch (error) {
+      console.error("Error in useMail.applyAiResults:", error);
+    }
+  }, []);
+
+  const clearAiResults = useCallback(() => {
+    try {
+      setAiResultItems(null);
+      setAiResultQuery(null);
+    } catch (error) {
+      console.error("Error in useMail.clearAiResults:", error);
+    }
+  }, []);
+
   return {
     mailbox,
     mails,
+    displayedMails,
     selectedMail,
     selectedMailId,
     unreadCount,
@@ -178,11 +209,15 @@ export function useMail() {
     isLoadingMore,
     isSendingMail,
     hasMore: !!nextPageToken,
+    isAiResultsActive,
+    aiResultQuery,
     loadInitialInbox,
     loadMailbox,
     refreshCurrentMailbox,
     loadMore,
     openMail,
     sendComposeMail,
+    applyAiResults,
+    clearAiResults,
   };
 }

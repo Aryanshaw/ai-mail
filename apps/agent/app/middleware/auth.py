@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from app.auth.service import get_current_user
 
 PROTECTED_PATHS = {"/auth/me", "/auth/logout", "/ws/token"}
-PROTECTED_PREFIXES = ("/mail",)
+PROTECTED_PREFIXES = ("/mail", "/ai")
 
 
 async def auth_middleware(request: Request, call_next):

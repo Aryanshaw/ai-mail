@@ -30,6 +30,32 @@ export interface SendMailPayload {
   body: string;
 }
 
+export interface AIUiAction {
+  type: "APPLY_FILTERS" | "SHOW_SEARCH_RESULTS" | "OPEN_EMAIL" | "CLEAR_AI_RESULTS" | "SHOW_ERROR";
+  payload: Record<string, unknown>;
+}
+
+export interface AITrace {
+  providerUsed: string;
+  toolsCalled: string[];
+  candidateCount: number;
+  finalCount: number;
+}
+
+export interface AIChatRequestContext {
+  activeMailbox: MailboxType;
+  selectedMailId: string | null;
+  currentFilters: Record<string, unknown>;
+  timezone: string;
+}
+
+export interface AIChatResponse {
+  assistantMessage: string;
+  uiActions: AIUiAction[];
+  results: MailItem[];
+  trace: AITrace;
+}
+
 export interface ChatMessage {
   id: string;
   role: "assistant" | "user";
