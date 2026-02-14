@@ -96,7 +96,7 @@ export function AIPanel({
               return (
                 <div
                   key={message.id}
-                  className={`max-w-[92%] rounded-md border px-3 py-2 text-sm leading-6 transition-all ${
+                  className={`max-w-[92%] rounded-md border px-3 py-2 text-xs leading-6 transition-all ${
                     isAssistant
                       ? "self-start border-white/35 bg-white/55 text-zinc-700 dark:border-white/16 dark:bg-white/10 dark:text-zinc-200"
                       : "self-end border-white/48 bg-white/75 text-zinc-900 dark:border-white/20 dark:bg-white/15 dark:text-zinc-100"
@@ -134,7 +134,7 @@ export function AIPanel({
                   }
                 }}
                 rows={3}
-                className="min-h-20 flex-1 resize-none rounded-lg border border-white/40 bg-white/70 px-2 py-2 text-sm text-zinc-900 outline-none transition-all placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 focus:border-white focus:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:border-white/30 dark:focus:bg-white/15"
+                className="min-h-20 flex-1 resize-none rounded-lg border border-white/40 bg-white/70 px-2 py-2 text-xs text-zinc-900 outline-none transition-all placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-60 focus:border-white focus:bg-white dark:border-white/20 dark:bg-white/10 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:border-white/30 dark:focus:bg-white/15"
               />
               <Button
                 type="button"
