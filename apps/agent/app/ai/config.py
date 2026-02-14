@@ -29,7 +29,7 @@ class AISettings:
 def load_ai_settings() -> AISettings:
     """Load AI settings from environment variables with safe defaults."""
     return AISettings(
-        default_model_selector=os.getenv("AI_DEFAULT_MODEL_SELECTOR", "groq"),
+        default_model_selector=os.getenv("AI_DEFAULT_MODEL_SELECTOR", "auto"),
         gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
         groq_model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
         temperature=float(os.getenv("AI_TEMPERATURE", "0.1")),

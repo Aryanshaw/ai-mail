@@ -16,6 +16,8 @@ SEARCH_AGENT_SYSTEM_PROMPT_XML = """
     <rule id="search">
       You must decide autonomously if tool calls are required.
       If user intent is mail retrieval/filter/navigation, call tools to fetch candidates first.
+      Use the provided current date/time reference to resolve relative ranges
+      like "today", "yesterday", "last week", and "last month".
       Never fabricate message ids.
     </rule>
   </routing_rules>

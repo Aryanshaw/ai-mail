@@ -1,7 +1,9 @@
 import json
 import os
 import re
+from datetime import UTC, datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from fastapi import HTTPException, status
 from langchain.agents import create_agent
@@ -88,6 +90,7 @@ class SearchAgent:
                 "tools_called": [],
                 "queries_used": [],
             }
+            current_datetime_reference = self._get_current_datetime_reference(context)
             tools = SearchToolFactory(
                 user_id=user_id,
                 mail_service=self.mail_service,
@@ -110,6 +113,7 @@ class SearchAgent:
                                 f"User query: {message}\n"
                                 f"Conversation history JSON: {json.dumps(memory_messages or [])}\n"
                                 f"Context JSON: {json.dumps(context)}\n"
+                                f"Current datetime reference: {current_datetime_reference}\n"
                                 "If user asks semantic topic (e.g. rejection mails), craft Gmail "
                                 "queries with relevant keywords and retrieve candidates."
                             ),
@@ -126,6 +130,24 @@ class SearchAgent:
         except Exception as exc:
             print(f"Error in SearchAgent._invoke_with_provider: {exc}")
             raise
+
+    def _get_current_datetime_reference(self, context: dict[str, Any]) -> str:
+        """Build timezone-aware current datetime reference for resolving relative date queries."""
+        try:
+            timezone_name = str(context.get("timezone") or "").strip()
+            if timezone_name:
+                try:
+                    now_value = datetime.now(ZoneInfo(timezone_name))
+                    return now_value.isoformat()
+                except Exception as timezone_exc:
+                    print(
+                        "Error in SearchAgent._get_current_datetime_reference.timezone_parse: "
+                        f"{timezone_exc}"
+                    )
+            return datetime.now(UTC).isoformat()
+        except Exception as exc:
+            print(f"Error in SearchAgent._get_current_datetime_reference: {exc}")
+            return datetime.now(UTC).isoformat()
 
     def _build_llm(self, provider: str):
         """Instantiate provider client with centralized model configuration."""
