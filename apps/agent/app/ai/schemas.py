@@ -37,6 +37,7 @@ class AIChatResponse(BaseModel):
 
 class AIWsChatRequestPayload(BaseModel):
     chat_id: str = Field(alias="chatId")
+    conversation_id: str | None = Field(default=None, alias="conversationId")
     message: str
     model: str = "auto"
     context: AIContext

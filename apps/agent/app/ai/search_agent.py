@@ -27,6 +27,7 @@ class SearchAgent:
         user_id: str,
         message: str,
         context: dict[str, Any],
+        memory_messages: list[dict[str, str]] | None = None,
         model_selector: str = "auto",
     ) -> AIChatResponse:
         """Run SearchAgent with tools and return source-bound UI actions/results."""
@@ -37,6 +38,7 @@ class SearchAgent:
                 user_id=user_id,
                 message=message,
                 context=context,
+                memory_messages=memory_messages,
             )
             return response
         except Exception as exc:
@@ -51,6 +53,7 @@ class SearchAgent:
                     user_id=user_id,
                     message=message,
                     context=context,
+                    memory_messages=memory_messages,
                 )
             except Exception as fallback_exc:
                 print(f"Error in SearchAgent.search.fallback: {fallback_exc}")
@@ -75,6 +78,7 @@ class SearchAgent:
         user_id: str,
         message: str,
         context: dict[str, Any],
+        memory_messages: list[dict[str, str]] | None = None,
     ) -> AIChatResponse:
         """Invoke a provider-specific tool-calling agent and normalize output payload."""
         try:
@@ -104,6 +108,7 @@ class SearchAgent:
                             "role": "user",
                             "content": (
                                 f"User query: {message}\n"
+                                f"Conversation history JSON: {json.dumps(memory_messages or [])}\n"
                                 f"Context JSON: {json.dumps(context)}\n"
                                 "If user asks semantic topic (e.g. rejection mails), craft Gmail "
                                 "queries with relevant keywords and retrieve candidates."

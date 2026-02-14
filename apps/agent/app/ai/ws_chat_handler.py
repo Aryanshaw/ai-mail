@@ -6,6 +6,7 @@ from typing import Any
 from fastapi import WebSocket
 from pydantic import ValidationError
 
+from app.ai.memory_service import AIConversationMemoryService
 from app.ai.schemas import AIWsChatRequestPayload
 from app.ai.search_agent import SearchAgent
 
@@ -15,6 +16,7 @@ class AIWebSocketChatHandler:
 
     def __init__(self):
         self.search_agent = SearchAgent()
+        self.memory_service = AIConversationMemoryService()
 
     async def handle_chat_request(
         self,
@@ -27,26 +29,53 @@ class AIWebSocketChatHandler:
             request_payload = AIWsChatRequestPayload.model_validate(payload)
             chat_id = request_payload.chat_id
             message = request_payload.message.strip()
+            mailbox = request_payload.context.active_mailbox
             if not message:
                 await self._emit_chat_error(websocket, chat_id, "Message cannot be empty")
                 return
 
+            conversation = await self.memory_service.resolve_conversation(
+                user_id=user_id,
+                mailbox=mailbox,
+                conversation_id=request_payload.conversation_id,
+            )
+            conversation_id = str(conversation.id)
+
             await self._emit_chat_start(
                 websocket=websocket,
                 chat_id=chat_id,
+                conversation_id=conversation_id,
                 user_message=message,
                 model=request_payload.model,
             )
 
+            await self.memory_service.append_message(
+                conversation_id=conversation_id,
+                user_id=user_id,
+                role="user",
+                content=message,
+            )
+            memory_messages = await self.memory_service.fetch_recent_messages(
+                conversation_id=conversation_id,
+                user_id=user_id,
+                limit=14,
+            )
+            history_context = self.memory_service.build_history_context(memory_messages)
             response = await self.search_agent.search(
                 user_id=user_id,
                 message=message,
                 context=request_payload.context.model_dump(by_alias=True),
+                memory_messages=history_context,
                 model_selector=request_payload.model,
             )
 
             for chunk in self._chunk_message(response.assistant_message):
-                await self._emit_chat_delta(websocket=websocket, chat_id=chat_id, delta=chunk)
+                await self._emit_chat_delta(
+                    websocket=websocket,
+                    chat_id=chat_id,
+                    conversation_id=conversation_id,
+                    delta=chunk,
+                )
 
             serialized_results = [
                 item.model_dump(by_alias=True) for item in response.results
@@ -55,14 +84,25 @@ class AIWebSocketChatHandler:
                 await self._emit_chat_action(
                     websocket=websocket,
                     chat_id=chat_id,
+                    conversation_id=conversation_id,
                     action=action.model_dump(by_alias=True),
                     results=serialized_results,
                 )
 
+            response_payload = response.model_dump(by_alias=True)
+            await self.memory_service.append_message(
+                conversation_id=conversation_id,
+                user_id=user_id,
+                role="assistant",
+                content=response.assistant_message,
+                ui_actions_json=response_payload.get("uiActions"),
+                trace_json=response_payload.get("trace"),
+            )
             await self._emit_chat_completed(
                 websocket=websocket,
                 chat_id=chat_id,
-                response_payload=response.model_dump(by_alias=True),
+                conversation_id=conversation_id,
+                response_payload=response_payload,
             )
         except ValidationError as exc:
             print(f"Error in AIWebSocketChatHandler.handle_chat_request.validation: {exc}")
@@ -76,6 +116,7 @@ class AIWebSocketChatHandler:
         self,
         websocket: WebSocket,
         chat_id: str,
+        conversation_id: str,
         user_message: str,
         model: str,
     ) -> None:
@@ -88,6 +129,7 @@ class AIWebSocketChatHandler:
                     "ts": self._utc_now_iso(),
                     "payload": {
                         "chatId": chat_id,
+                        "conversationId": conversation_id,
                         "userMessage": user_message,
                         "model": model,
                     },
@@ -97,7 +139,13 @@ class AIWebSocketChatHandler:
             print(f"Error in AIWebSocketChatHandler._emit_chat_start: {exc}")
             raise
 
-    async def _emit_chat_delta(self, websocket: WebSocket, chat_id: str, delta: str) -> None:
+    async def _emit_chat_delta(
+        self,
+        websocket: WebSocket,
+        chat_id: str,
+        conversation_id: str,
+        delta: str,
+    ) -> None:
         """Send one incremental assistant text chunk to drive streaming UI updates."""
         try:
             await websocket.send_json(
@@ -107,6 +155,7 @@ class AIWebSocketChatHandler:
                     "ts": self._utc_now_iso(),
                     "payload": {
                         "chatId": chat_id,
+                        "conversationId": conversation_id,
                         "delta": delta,
                     },
                 }
@@ -119,6 +168,7 @@ class AIWebSocketChatHandler:
         self,
         websocket: WebSocket,
         chat_id: str,
+        conversation_id: str,
         action: dict[str, Any],
         results: list[dict[str, Any]],
     ) -> None:
@@ -131,6 +181,7 @@ class AIWebSocketChatHandler:
                     "ts": self._utc_now_iso(),
                     "payload": {
                         "chatId": chat_id,
+                        "conversationId": conversation_id,
                         "action": action,
                         "results": results,
                     },
@@ -144,6 +195,7 @@ class AIWebSocketChatHandler:
         self,
         websocket: WebSocket,
         chat_id: str,
+        conversation_id: str,
         response_payload: dict[str, Any],
     ) -> None:
         """Send final chat payload with assistant text, actions, results, and trace metadata."""
@@ -155,6 +207,7 @@ class AIWebSocketChatHandler:
                     "ts": self._utc_now_iso(),
                     "payload": {
                         "chatId": chat_id,
+                        "conversationId": conversation_id,
                         **response_payload,
                     },
                 }

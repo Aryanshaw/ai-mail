@@ -74,6 +74,7 @@ export interface WsEnvelope<T = unknown> {
 
 export interface ChatRequestPayload {
   chatId: string;
+  conversationId?: string;
   message: string;
   model: AIModelSelector;
   context: AIChatRequestContext;
@@ -81,23 +82,27 @@ export interface ChatRequestPayload {
 
 export interface ChatStartPayload {
   chatId: string;
+  conversationId: string;
   userMessage: string;
   model: AIModelSelector;
 }
 
 export interface ChatDeltaPayload {
   chatId: string;
+  conversationId: string;
   delta: string;
 }
 
 export interface ChatActionPayload {
   chatId: string;
+  conversationId: string;
   action: AIUiAction;
   results?: MailItem[];
 }
 
 export interface ChatCompletedPayload extends AIChatResponse {
   chatId: string;
+  conversationId: string;
 }
 
 export interface ChatErrorPayload {

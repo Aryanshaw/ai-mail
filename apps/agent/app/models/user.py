@@ -22,3 +22,9 @@ class User(Base, TimestampMixin):
     oauth_accounts = relationship(
         "OauthAccount", back_populates="user", cascade="all, delete-orphan"
     )
+    ai_conversations = relationship(
+        "AIConversation", back_populates="user", cascade="all, delete-orphan"
+    )
+    ai_conversation_messages = relationship(
+        "AIConversationMessage", back_populates="user", cascade="all, delete-orphan"
+    )

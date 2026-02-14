@@ -17,7 +17,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface UseAIAssistantOptions {
   model: AIModelSelector;
-  onAction: (action: AIUiAction, payload: { chatId: string; prompt: string; results: ChatActionPayload["results"] }) => void | Promise<void>;
+  onAction: (action: AIUiAction, payload: {
+    chatId: string;
+    prompt: string;
+    results: ChatActionPayload["results"];
+  }) => void | Promise<void>;
 }
 
 export function useAIAssistant(options: UseAIAssistantOptions) {
@@ -28,6 +32,7 @@ export function useAIAssistant(options: UseAIAssistantOptions) {
   const activeChatIdRef = useRef<string | null>(null);
   const activeAssistantMessageIdRef = useRef<string | null>(null);
   const activePromptRef = useRef<string>("");
+  const conversationIdRef = useRef<string | null>(null);
 
   const sendMessage = useCallback(
     async (message: string, context: AIChatRequestContext): Promise<void> => {
@@ -77,6 +82,7 @@ export function useAIAssistant(options: UseAIAssistantOptions) {
       try {
         const eventPayload: ChatRequestPayload = {
           chatId,
+          conversationId: conversationIdRef.current || undefined,
           message: trimmedMessage,
           model,
           context,
@@ -108,9 +114,12 @@ export function useAIAssistant(options: UseAIAssistantOptions) {
 
   useEffect(() => {
     const unsubscribeStart = subscribe("chat_start", (event) => {
-      const payload = event.payload as { chatId?: string };
+      const payload = event.payload as { chatId?: string; conversationId?: string };
       if (payload.chatId !== activeChatIdRef.current) {
         return;
+      }
+      if (typeof payload.conversationId === "string" && payload.conversationId) {
+        conversationIdRef.current = payload.conversationId;
       }
       setIsLoading(true);
     });
@@ -158,6 +167,9 @@ export function useAIAssistant(options: UseAIAssistantOptions) {
       const payload = event.payload as ChatCompletedPayload;
       if (payload.chatId !== activeChatIdRef.current) {
         return;
+      }
+      if (typeof payload.conversationId === "string" && payload.conversationId) {
+        conversationIdRef.current = payload.conversationId;
       }
       const assistantMessageId = activeAssistantMessageIdRef.current;
       if (assistantMessageId) {
@@ -241,8 +253,9 @@ export function useAIAssistant(options: UseAIAssistantOptions) {
     setIsLoading(false);
   }, [isLoading, status]);
 
-  const clearMessages = useCallback(() => {
+    const clearMessages = useCallback(() => {
     setMessages([]);
+    conversationIdRef.current = null;
   }, []);
 
   return useMemo(
