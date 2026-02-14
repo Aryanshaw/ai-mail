@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import os
 import uuid
@@ -158,6 +159,8 @@ class GmailTokenService:
 class GmailMailService:
     """Read and update Gmail messages used by the mail workspace UI."""
 
+    LIST_FETCH_CONCURRENCY = 10
+
     def __init__(self):
         self.token_service = GmailTokenService()
 
@@ -242,7 +245,9 @@ class GmailMailService:
             subject = header_map.get("subject", "(no subject)")
             internal_date = payload.get("internalDate")
             unread = "UNREAD" in (payload.get("labelIds") or [])
-            body = self._extract_plain_text_body(payload.get("payload", {}))
+            raw_payload = payload.get("payload", {})
+            html_body = self._extract_html_body(raw_payload)
+            body = self._extract_plain_text_body(raw_payload)
 
             return MailDetailResponse(
                 id=payload.get("id", message_id),
@@ -250,6 +255,7 @@ class GmailMailService:
                 subject=subject,
                 snippet=payload.get("snippet", ""),
                 body=body or payload.get("snippet", ""),
+                htmlBody=html_body,
                 dateLabel=self._format_date_label(internal_date),
                 unread=unread,
             )
@@ -308,14 +314,25 @@ class GmailMailService:
     ) -> list[MailListItem]:
         """Resolve message metadata for each listed Gmail message id."""
         try:
-            results: list[MailListItem] = []
-            for message in messages:
-                message_id = message.get("id")
-                if not message_id:
-                    continue
-                item = await self._fetch_single_list_item(client, headers, message_id)
-                results.append(item)
-            return results
+            message_ids = [message.get("id") for message in messages if message.get("id")]
+            if not message_ids:
+                return []
+
+            concurrency = min(self.LIST_FETCH_CONCURRENCY, len(message_ids))
+            semaphore = asyncio.Semaphore(concurrency)
+
+            async def fetch_with_limit(index: int, message_id: str) -> tuple[int, MailListItem]:
+                async with semaphore:
+                    item = await self._fetch_single_list_item(client, headers, message_id)
+                    return index, item
+
+            tasks = [
+                fetch_with_limit(index, message_id)
+                for index, message_id in enumerate(message_ids)
+            ]
+            indexed_items = await asyncio.gather(*tasks)
+            indexed_items.sort(key=lambda item: item[0])
+            return [item for _, item in indexed_items]
         except Exception as exc:
             print(f"Error in GmailMailService._fetch_list_items: {exc}")
             raise
@@ -373,34 +390,42 @@ class GmailMailService:
     def _extract_plain_text_body(self, payload: dict) -> str:
         """Decode the first text/plain body part from a Gmail payload tree."""
         try:
-            direct_body = payload.get("body", {}).get("data")
-            if direct_body:
-                decoded = self._decode_base64_urlsafe(direct_body)
-                if decoded:
-                    return decoded
-
-            parts = payload.get("parts", []) or []
-            for part in parts:
-                mime_type = part.get("mimeType")
-                if mime_type == "text/plain":
-                    data = part.get("body", {}).get("data")
-                    if data:
-                        decoded = self._decode_base64_urlsafe(data)
-                        if decoded:
-                            return decoded
-
-                nested_parts = part.get("parts", []) or []
-                for nested in nested_parts:
-                    if nested.get("mimeType") == "text/plain":
-                        data = nested.get("body", {}).get("data")
-                        if data:
-                            decoded = self._decode_base64_urlsafe(data)
-                            if decoded:
-                                return decoded
-            return ""
+            data = self._find_body_data_by_mime(payload, "text/plain")
+            if not data:
+                return ""
+            return self._decode_base64_urlsafe(data)
         except Exception as exc:
             print(f"Error in GmailMailService._extract_plain_text_body: {exc}")
             return ""
+
+    def _extract_html_body(self, payload: dict) -> str | None:
+        """Decode the first text/html body part from a Gmail payload tree."""
+        try:
+            data = self._find_body_data_by_mime(payload, "text/html")
+            if not data:
+                return None
+            decoded = self._decode_base64_urlsafe(data)
+            return decoded or None
+        except Exception as exc:
+            print(f"Error in GmailMailService._extract_html_body: {exc}")
+            return None
+
+    def _find_body_data_by_mime(self, payload: dict, mime_type: str) -> str | None:
+        """Recursively search a Gmail payload for a specific mime body data block."""
+        try:
+            if payload.get("mimeType") == mime_type:
+                data = payload.get("body", {}).get("data")
+                if data:
+                    return data
+
+            for part in payload.get("parts", []) or []:
+                data = self._find_body_data_by_mime(part, mime_type)
+                if data:
+                    return data
+            return None
+        except Exception as exc:
+            print(f"Error in GmailMailService._find_body_data_by_mime: {exc}")
+            return None
 
     def _decode_base64_urlsafe(self, value: str) -> str:
         """Decode urlsafe base64 Gmail body content into utf-8 text."""

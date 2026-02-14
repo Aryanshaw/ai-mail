@@ -730,3 +730,48 @@ html {
 .dark .mail-recipient-chip-remove:hover {
   background: rgb(255 255 255 / 0.2);
 }
+
+.mail-rendered-content {
+  color: rgb(63 63 70);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.mail-rendered-content a {
+  color: rgb(37 99 235);
+  text-decoration: underline;
+}
+
+.mail-rendered-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.4rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mail-rendered-content blockquote {
+  border-left: 3px solid rgb(161 161 170 / 0.5);
+  margin: 0.75rem 0;
+  padding-left: 0.75rem;
+  color: rgb(82 82 91);
+}
+
+.mail-rendered-content pre,
+.mail-rendered-content code {
+  white-space: pre-wrap;
+}
+
+.dark .mail-rendered-content {
+  color: rgb(228 228 231);
+}
+
+.dark .mail-rendered-content a {
+  color: rgb(147 197 253);
+}
+
+.dark .mail-rendered-content blockquote {
+  border-left-color: rgb(161 161 170 / 0.6);
+  color: rgb(212 212 216);
+}

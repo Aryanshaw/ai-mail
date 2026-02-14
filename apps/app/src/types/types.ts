@@ -8,6 +8,7 @@ export interface MailItem {
   snippet: string;
   dateLabel: string;
   unread: boolean;
+  htmlBody?: string | null;
   category?: "Important" | "Team" | "Personal";
   body?: string;
 }

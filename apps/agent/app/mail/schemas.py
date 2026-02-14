@@ -21,6 +21,7 @@ class MailDetailResponse(BaseModel):
     subject: str
     snippet: str
     body: str
+    html_body: str | None = Field(default=None, alias="htmlBody")
     date_label: str = Field(alias="dateLabel")
     unread: bool
 

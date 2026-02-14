@@ -1,6 +1,7 @@
 import { MailItem } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import { Forward, Mail, Reply, Star } from "lucide-react";
+import { EmailBodyRenderer } from "./email-body-renderer";
 
 interface EmailDetailPanelProps {
   selectedMail: MailItem | null;
@@ -31,9 +32,10 @@ export function EmailDetailPanel({ selectedMail }: EmailDetailPanelProps) {
 
       {/* Body remains scrollable while header and actions stay anchored. */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
-        <p className="whitespace-pre-line text-sm leading-7 text-zinc-700 dark:text-zinc-300">
-          {selectedMail.body ?? selectedMail.snippet}
-        </p>
+        <EmailBodyRenderer
+          htmlBody={selectedMail.htmlBody}
+          plainBody={selectedMail.body ?? selectedMail.snippet}
+        />
       </div>
 
       {/* Quick actions for the selected message thread. */}
